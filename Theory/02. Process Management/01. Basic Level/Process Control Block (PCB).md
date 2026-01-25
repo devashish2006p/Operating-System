@@ -1,0 +1,81 @@
+## Process Control Block (PCB)
+
+**Definition:**  
+Process Control Block (PCB) is a data structure maintained by the OS that contains all important information about a process. It allows the OS to create, manage, schedule, pause, resume, and terminate processes.
+
+---
+
+### Why PCB is Needed
+The OS handles thousands of processes and constantly switches the CPU between them.  
+When a process moves from Running to Ready/Waiting, the OS needs to remember:
+- How much of the process has executed
+- Which resources it was using
+- Where to resume execution next  
+
+All this information is stored in the PCB, making it extremely important for multitasking and process management.
+
+---
+
+### Contents of PCB
+
+1. **Process Identification Information**  
+   - Contains process identity details:
+     - **PID:** Unique Process ID  
+     - **PPID:** Parent Process ID (who created it)  
+     - **User ID:** Owner of the process  
+   - Helps the OS distinguish between thousands of processes, maintain parent-child relationships, and enforce permissions & ownership.
+
+2. **Process State Information**  
+   - Indicates the current state of the process (New, Ready, Running, Waiting, Terminated)  
+   - Important for the scheduler to decide whether the process can run or what action to take next.
+
+3. **Program Counter (PC)**  
+   - Holds the address of the next instruction to execute  
+   - Crucial for resuming execution after context switching and maintaining execution continuity.
+
+4. **CPU Registers Information**  
+   - Stores snapshots of all CPU registers, including:
+     - General purpose registers
+     - Stack pointer
+     - Base/index registers
+     - Status/flag register  
+   - Helps resume process execution exactly from where it left off.
+
+5. **CPU Scheduling Information**  
+   - Stores process scheduling data like:
+     - Process priority
+     - Scheduling policy/class
+     - Ready/Wait queue pointers
+     - Time slice
+     - CPU burst estimates  
+   - Guides the OS on how and when to allocate CPU to the process.
+
+6. **Memory Management Information**  
+   - Contains process memory layout and mapping details:
+     - Base/limit values
+     - Page table / Segment table pointers
+     - Virtual to physical address mapping  
+   - Ensures correct memory allocation, access control, and isolation.
+
+7. **I/O Status Information**  
+   - Tracks I/O details:
+     - Open file descriptors
+     - Connected devices
+     - Ongoing/pending I/O requests
+     - Allocated I/O resources  
+   - Helps the OS manage process interaction with devices and I/O completion status.
+
+8. **Accounting Information**  
+   - Records resource usage:
+     - CPU time used
+     - Memory consumption
+     - I/O usage
+     - Start time, execution duration
+     - User/system identifiers  
+   - Useful for performance monitoring, quotas, billing, and analysis.
+
+9. **Security & Protection Information**  
+   - Stores access rights and identity details:
+     - User ID
+     - Group ID  
+   - Ensures proper process-level security and protection.
