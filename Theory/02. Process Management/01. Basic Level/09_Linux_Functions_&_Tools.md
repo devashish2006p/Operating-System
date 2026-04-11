@@ -1,7 +1,7 @@
 # Process State & State Transition 
 
 ## 1. USER-SPACE TOOLS 
-
+ 
 1. ps - Ya ek user-space command hai jo system ka current running processes ki snapshot information dikhata hai. Jab user *ps* run karta hai tab system ka ander jo processes chal rha hota hai unki info collect karta hai aur unhe table ka form ma dikha deta hai.
 
 **Internal Mechanism**
