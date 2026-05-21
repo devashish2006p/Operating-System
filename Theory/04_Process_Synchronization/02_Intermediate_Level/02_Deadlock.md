@@ -31,3 +31,11 @@ Consumable resource ek aisa resource hota hai jo use hone ka baad consume/finish
 ---
 
 # 3. Deadlock Conditions 
+Deadlock conditions wo necessary/system conditions hoti hai jo agar ek sath system ma present ho jayein, to deadlock occur hone ki posibility create ho jati hai. 
+1. Mutual Exclusion - Ya ek aisa condition hoti hai jisme ksi non-shared resource ya critical section ko ek time par sirf ek hi process access kar shakta hai aur dusre processes ko wait karna parta hai jab tak current holder ushe release na kare.
+
+2. Hold and Wait - Ya ek aisi deadlock condition hoti hai jahan koi process ek ya zyada resources ko already hold karke rakhta hai aur sath hi additional resources ka liya wait bhi karta rehta hai jo currently dusre processes ka pass hote hai. 
+
+3. No - Preemption - Ya ek aisi deadlock condition hoti hai jahan allocated non-preemptable resources ko process sa forcefully wapas nhi liya ja shakta aur process ko kaam complete karke khud voluntarily resource release karna parta hai. 
+
+4. Circular wait - Ya ek aisi deadlock condition hoti hai jahan do ya usse zyada processes/resources ek circular chain ma ek dusre ka wait karte rehte hai, jisshe koi bhi process execution continue nhi kar pata. 
