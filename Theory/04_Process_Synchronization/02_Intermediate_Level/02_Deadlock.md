@@ -6,13 +6,28 @@ Deadlock ek aisi dangerous situation hoti hai jahan do ya usse zyada process/thr
     3. Resource utilization waste hota hai.
     4. Throughput reduce hota hai.
     5. System responsiveness kharab hoti hai.
+       
+--- 
 
 # 2. Resource Concepts
+## 2.1 About Resource
 Resource ek aisi system entity/object/service hoti hai jise processes ya threads apna kaam execute karne ka lia use karte hai, aur jo limited quantity me available hoti hai, isiliye multiple processes ka beech ushke liya competition ho shakta hai. 
 
-## 2.1 Types of Resources
+## 2.2 Types of Resources
 ### 1. Reusable Resource
 Reusable resource ek aisa resource hota hai jise ek process use karne ka baad release kar deta hai aur fir wahi same resource dusra process dobara use kar shakta hai, yani resource consume ya permanently khatam nhi hota. 
 
+- **Types of Reusable Resource**
+- 1. Preemptable : Ya ek aisa reusable resource hota hai jise OS/process se zabardasti temporarily wapas le shakta hai bina system ko corrupt ya permanently damage kiye aur baad ma us resource ko firse allocate kiya ja shakta hai. Ex - CPU, RAM pages/ Memory frames, CPU registers, cache blocks, virtual memory space etc. 
+  2. Non- preemptable : Ya ek aisa reusable resource hota hai jisa process se forcefully wapas nhi liya ja shakta bina data corruption, inconsistency ya system problem create kiye, isiliye process ko kaam complete karke khud resource release karna parta hai. Ex - Printer, Scanner, File lock, Database lock etc. 
+
 ### 2. Consumable Resources
-Consumable resource ek aisa resource hota hai jo use hone ka baad consume/finish ho jata hai aur fir wahi exact instance dobara reuse  nahi kiya jaa shakta, isiliye usually ushe producer ko firse generate/create karna parta hai. 
+Consumable resource ek aisa resource hota hai jo use hone ka baad consume/finish ho jata hai aur fir wahi exact instance dobara reuse  nahi kiya jaa shakta, isiliye usually ushe producer ko firse generate/create karna parta hai. Ex - Messages, Signals, Packets, Interrupts etc.  
+
+## 2.3 Shared Vs Non Shared Resources 
+- **Shared Resource** : Shared resource ek aisa resource hota hai jise ek sa zyada processes/threads controlled manner ma access ya use kar shakte hai.
+- **Non-shared Resource** : Non-shared resource ek aisa resource hota hai jo ek time par sirf ek hi process/thread ka exclusion control/use me hota hai aur dusre processes ushe simultaneously access nhi kar shakte. 
+
+---
+
+# 3. Deadlock Conditions 
