@@ -51,5 +51,5 @@ Resource Allocation Graph (RAG) ek graphical representation hota hai jo show kar
 
 4. Assignment Edge - Ya ek directed arrow hota hai jo resource node sa process node ki taraf jata hai aur ye represent karta hai ki resource currently us process ko allocated hai.
 
-# 5. Cycle Detection
+## 4.2 Cycle Detection
 Cycle detection ek analysis technique hota hai jisme Resource Allocation Graph (RAG) ma circular dependency/path ko idenfity kiya jata hai taki deadlock posibility ya actual deadlock ko detect kiya ja sake. 
