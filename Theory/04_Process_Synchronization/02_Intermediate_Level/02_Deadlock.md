@@ -39,3 +39,17 @@ Deadlock conditions wo necessary/system conditions hoti hai jo agar ek sath syst
 3. No - Preemption - Ya ek aisi deadlock condition hoti hai jahan allocated non-preemptable resources ko process sa forcefully wapas nhi liya ja shakta aur process ko kaam complete karke khud voluntarily resource release karna parta hai. 
 
 4. Circular wait - Ya ek aisi deadlock condition hoti hai jahan do ya usse zyada processes/resources ek circular chain ma ek dusre ka wait karte rehte hai, jisshe koi bhi process execution continue nhi kar pata. 
+
+# 4. Resource Allocation Graph (RAG)
+Resource Allocation Graph (RAG) ek graphical representation hota hai jo show karta hai kaunsa process kaunsa resource use kar rha hai aur kaunsa resource resource ka wait kar rha hai. RAG ka main kam sirf resource dependency ko visually dikhana  hota hai. 
+## 4.1 Internal Components
+1. Process Nodes - Ya ek graphical component hota hai jo system ka ksi process/thread ko represent karta hai, yani graph ma dikhata hai ki kaunsa process resources hold ya request kar rha hai. Ishka representation shape circle ka form a hota hai. 
+
+2. Resource Nodes - Ya system ka ksi resource/resource type ko represent karta hai, yani graph ma dikhata hai ki kaunsa resource available, allocated ya requested hai. Ishka representation shape rectangle/box ka shape ma hota hai. 
+
+3. Request Edge - Ya ek directed arrow hota hai jo process node sa resource node ki taraf jata hai aur ye represent karta hai ki process us resource ko request/wait kar rha hai. 
+
+4. Assignment Edge - Ya ek directed arrow hota hai jo resource node sa process node ki taraf jata hai aur ye represent karta hai ki resource currently us process ko allocated hai.
+
+# 5. Cycle Detection
+Cycle detection ek analysis technique hota hai jisme Resource Allocation Graph (RAG) ma circular dependency/path ko idenfity kiya jata hai taki deadlock posibility ya actual deadlock ko detect kiya ja sake. 
