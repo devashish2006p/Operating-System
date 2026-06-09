@@ -95,7 +95,20 @@ Device Abstraction ek mechanism hai jo hardware ki complexity ko hide karke prog
   14. System Call Interface result ko application tak return kar deta hai.
   
   15. Application ko device operation ka final result mil jata hai, bina hardware ki internal complexity jaane.
-      
-# 4. Device Controller 
+       
 
-# 5. Memory Vs Device Concept 
+# 4. Memory Vs Device 
+## 4.1 Memory (RAM) 
+- Data aur instructions store karti hai.
+- CPU directly access kar shakta hai.
+- Bahut fast hota hai.
+- Random access provide karta hai.
+- Program execution ka lia use hota hai.
+- Ex - RAM, Cache Memory.
+
+## 4.2 I/O Devices 
+- Computer ko external world sa connect karta hai.
+- CPU usually controller/driver ka thorugh access karta hai.
+- Memory sa kafi slow hota hai.
+- Data generate ya consume karta hai.
+- Ex - Keyboard, Mouse, SSD, Printer, Network Card. 
