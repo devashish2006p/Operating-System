@@ -69,6 +69,32 @@ Ya ek defined boundary/method set hota hai jiske through OS aur applications I/O
 # 2. Addressing
 Ya ek mechanism hai jissa CPU/OS decide karta hai ki kaunsa device, memory location ya register access karna hai. 
 ## 2.1 Types of Addressing
-#### 1. Memory Mapped I/O
-
-#### 2. Port Mapped I/O
+#### 1. Memory Mapped I/O (MMIO) 
+Ya ek addressing technique hai jishme I/O device ka registers ko normal memory address space ka ander map kar diya jata hai, jisshe CPU unhe normal load/store (memory read/write) instructions sa access kar shakta hai. 
+##### Internal Mechanism
+1. OS/device driver device controller ke registers ke liye memory address range reserve karta hai.
+2. Device controller ke control, status aur data registers ko us memory address range se map kar diya jata hai.
+3. CPU kisi I/O operation ke liye mapped address par read ya write request generate karta hai.
+4. CPU ka address address bus ke through system me bheja jata hai.
+5. Address decoder hardware check karta hai ki address RAM ka hai ya kisi device register ka.
+6. Agar address device range me aata hai to corresponding device controller select ho jata hai.
+7. CPU normal memory instructions (load/store, read/write) ka use karke register access karta hai.
+8. Control register access hone par device operation (read, write, start, stop) initiate ho sakta hai.
+9. Status register access karke CPU/device driver device ki current state (busy, ready, done, error) check kar sakta hai.
+10. Data register ke through actual data device aur CPU/memory ke beech transfer hota hai.
+11. Device operation complete hone par status register update hota hai aur zarurat padne par interrupt generate ho sakta hai.
+12. CPU/driver updated status aur data read karke operation complete karta hai.
+#### 2. Port Mapped I/O (PMIO) 
+Ya ek addressing technique hai jisme I/O devices ka registers ko memory address space ma map nhi kiya jata, balki uske liye alag i/o address space (ports) rakha jata hai. 
+##### Internal Mechanism
+1. OS/device driver target device ka I/O port address identify karta hai.
+2. CPU device access ke liye special I/O instruction (IN ya OUT) execute karta hai.
+3. CPU memory address bus ke bajay I/O port address system ko provide karta hai.
+4. I/O address decoder check karta hai ki requested port kis device controller se associated hai.
+5. Corresponding device controller select aur activate ho jata hai.
+6. OUT instruction hone par CPU data ko specified I/O port par send karta hai.
+7. IN instruction hone par CPU specified I/O port se data receive karta hai.
+8. Device controller port operation ko appropriate control, status ya data register tak route karta hai.
+9. Device requested operation perform karta hai (read/write/control action).
+10. Operation complete hone par device status update karta hai aur zarurat padne par interrupt generate kar sakta hai.
+11. CPU/driver final status aur data receive karke operation complete karta hai.
