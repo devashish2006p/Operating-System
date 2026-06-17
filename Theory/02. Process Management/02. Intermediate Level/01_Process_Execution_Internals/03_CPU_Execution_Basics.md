@@ -101,3 +101,52 @@ CPU Execution woh process hai jisme CPU memory se instruction fetch karta hai, u
 63. IR ma current instruction aa chuki hai.
 64. Fetch Complete. 
 
+### **Phase 5 : First Instruction Decode**
+1. IR ka ander current machine instruction stored hai joki binary form ma hoti hai.
+2. CU IR ko read karti hai aur CU smjhta hai ki instruction karna kya cahta hai.
+3. Instruction ka opcode field ko extract kiya jata hai.
+4. CU opcode decode karti hai aur identify karti hai ki ya arithmetic instruction hai ya memory instruction, jump instruction ya system call instruction hai.
+5. Instruction format identify hota hai. CPU dekhta hai kitna operands hai.
+6. Source operand identify hota hai.
+7. Destination operand identify hota hai.
+8. CU execution parth decide karta hai. Ex - ALU use karna hai, Memory access karna hai, Branch unit use karna hai etc.
+9. CU internal control signals prepare karti hai. Ab CPU ka ander execution enviroment prepare ho rha hai.
+10. Decode phase complete hoti hai. Ab CPU ko pta hai Instruction kya hai, Operands kya hai, Result kahan jayega, Kaunsa hardware use hoga.
+
+### **Phase 6 : Operand Fetch**
+Abi tak CPU ko instruction samajh aa gui, ab actual values lena baki hai. 
+1. CU register file ko read signal bhejti hai.
+2. Register File R1 locate karta hai.
+3. Register File R2 locate karta hai.
+4. R1 ka value internal datapath par aata hai.
+5. R2 ka value internal datapath par aata hai.
+6. Operands temporary execution path par move hota hai.
+7. Operands ALU inputs tak pahunchte hai.
+8. Operand Fetch complete. Ab ALU ka pass actual values aa chuki hai.
+
+### **Phase 7 : Execute**
+1. CU ALU ka lia control signal generate karti hai.
+2. ALU operation type receive karti hai.
+3. ALU input A receive karta hai.
+4. ALU input B receive karta hai.
+5. ALU arithmetic circuit activate karta hai.
+6. Binary addition perform hota hai.
+7. Result generate hota hai.
+8. Result ALU output par available ho jata hai.
+9. ALU execution complete karti hai.
+
+### **Phase 8 : Status Flag Update**
+ALU result ko analyze karta hai. 
+1. Zero Flag check hota hai.
+2. Carry Flag check hota hai.
+3. Overflow flag check hota hai.
+4. Sign flag check hota hai.
+5. Status register update hota hai.
+6. Flags future instructions ka lia ready ho jate hai.
+
+### **Phase 9 : Write Back**
+1. CU destination register identify karta hai.
+2. ALU output internal datapath par aata hai.
+3. Register file write signal receive karta hai.
+4. Result destination register ma write hota hai.
+5. Instruction officially complete ho jati hai. 
