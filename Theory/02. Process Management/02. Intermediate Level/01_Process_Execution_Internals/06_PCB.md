@@ -72,28 +72,3 @@
 3. Scheduler future ma is PCB ko select kar shakta hai.
 4. Jab CPU milega to isi PCB se context resotre hoga.
 5. Process running state me jayega. 
-# 2. PCB Life Cycle
-
-
-# 3. PCB and Context Switching
-
-
-# 4. PCB and Scheduling
-
-
-# 5. PCB and Process States
-
-
-# 6. PCB and Memory Management
-
-
-# 7. PCB and I/O Management
-
-
-# 8. PCB Storage
-
-
-# 9. PCB vs Process
-
-
-# 10. Real Execution Flow
