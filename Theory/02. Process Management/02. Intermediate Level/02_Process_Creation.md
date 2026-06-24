@@ -184,7 +184,7 @@ Jab compiler aur linker source code ko machine code ma convert karte hai, tab li
 7. Jab compressed ya packed files ke andar hidden executable check karna hota hai, tab file -z use hota hai.
 8. Jab raw device ya disk file ka content identify karna hota hai (forensics), tab file -s use hota hai.
 
-2. readelf
+2. readelf 
 3. objdump
 4. nm
 5. strings
