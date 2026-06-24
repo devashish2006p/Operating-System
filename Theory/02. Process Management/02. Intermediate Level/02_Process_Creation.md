@@ -175,14 +175,14 @@ Jab compiler aur linker source code ko machine code ma convert karte hai, tab li
     6. file -z <binary> : Ye compressed files ke andar bhi jaake check karta hai ki andar koi ELF binary ya executable hai ya nahi, useful for packed malware or zip analysis.
 
 - **When is it use?**
-1. Jab tumhe koi unknown file milti hai aur tumhe pata karna hota hai ki woh kya hai (ELF, text, image, etc.), tab file use hota hai.
-2. Jab tum suspicious file (malware ya unknown binary) analyze kar rahe hote ho, tab file pehle run karke uski identity check karte ho.
-3. Jab reverse engineering start karne se pehle confirm karna hota hai ki file ELF executable hai ya nahi, tab file use hota hai.
-4. Jab tumhe binary ka architecture (x86, x64, ARM) aur type (statically/dynamically linked) jaldi se dekhna hota hai, tab file use hota hai.
-5. Jab symbolic link (shortcut file) ka actual target check karna hota hai, tab file -L use hota hai.
-6. Jab multiple files ko quickly check karke unka type identify karna hota hai (automation/scripts), tab file -b use hota hai.
-7. Jab compressed ya packed files ke andar hidden executable check karna hota hai, tab file -z use hota hai.
-8. Jab raw device ya disk file ka content identify karna hota hai (forensics), tab file -s use hota hai.
+  1. Jab tumhe koi unknown file milti hai aur tumhe pata karna hota hai ki woh kya hai (ELF, text, image, etc.), tab file use hota hai.
+  2. Jab tum suspicious file (malware ya unknown binary) analyze kar rahe hote ho, tab file pehle run karke uski identity check karte ho.
+  3. Jab reverse engineering start karne se pehle confirm karna hota hai ki file ELF executable hai ya nahi, tab file use hota hai.
+  4. Jab tumhe binary ka architecture (x86, x64, ARM) aur type (statically/dynamically linked) jaldi se dekhna hota hai, tab file use hota hai.
+  5. Jab symbolic link (shortcut file) ka actual target check karna hota hai, tab file -L use hota hai.
+  6. Jab multiple files ko quickly check karke unka type identify karna hota hai (automation/scripts), tab file -b use hota hai.
+  7. Jab compressed ya packed files ke andar hidden executable check karna hota hai, tab file -z use hota hai.
+  8. Jab raw device ya disk file ka content identify karna hota hai (forensics), tab file -s use hota hai.
 
 2. readelf 
 3. objdump
