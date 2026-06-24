@@ -184,11 +184,117 @@ Jab compiler aur linker source code ko machine code ma convert karte hai, tab li
   7. Jab compressed ya packed files ke andar hidden executable check karna hota hai, tab file -z use hota hai.
   8. Jab raw device ya disk file ka content identify karna hota hai (forensics), tab file -s use hota hai.
 
-2. readelf 
-3. objdump
-4. nm
-5. strings
-6. size
+2. readelf - readelf ek Linux tool hai jo ELF file ke andar ka complete structure (headers, sections, entry point, memory layout) ko readable form me dikhata hai bina file ko run kiye.
+- **Major Flags**
+  1. readelf -h : Ye ELF file ka main header dikhata hai, jisme pata chalta hai file 32/64-bit hai, entry point kya hai, aur kis type ka executable hai.
+  
+  2. readelf -S : Ye ELF file ke sections (like .text, .data, .bss) dikhata hai, jisse pata chalta hai program ka code aur data ka structure kaise divided hai.
+  
+  3. readelf -l : Ye batata hai ki program memory me kaise load hoga (segments) aur OS usko kaise execute karega.
+  
+  4. readelf -s : Ye file ke andar ke functions aur variables (symbols) dikhata hai, jaise main, printf, etc.
+  
+  5. readelf -d : Ye batata hai ki binary kaun-kaun si shared libraries (.so files) use kar raha hai, yani dependencies kya hain.
+  
+  6. readelf -r : Ye show karta hai ki binary me relocation entries kaise handle ho rahi hain, matlab dynamic linking ka internal adjustment.
+  
+  7. readelf -A : Ye architecture-specific details dikhata hai (CPU type, ABI info), jo batata hai binary kis system ke liye optimized hai.
+  
+  8. readelf -a : Ye sab important information ek saath dump karta hai (header + sections + symbols + etc.), quick full overview ke liye.
+
+- **When is it use?**
+  1. Jab tumhe kisi ELF binary ka basic structure (header info) dekhna hota hai, tab readelf -h use hota hai.
+  2. Jab tumhe program ke sections (.text, .data, .bss) samajhne hote hain ki code aur data kaise divided hai, tab readelf -S use hota hai.
+  3. Jab tumhe samajhna hota hai ki binary memory me kaise load hoga (execution mapping), tab readelf -l use hota hai.
+  4. Jab tumhe binary ke andar ke functions aur variables (symbols) dekhne hote hain, tab readelf -s use hota hai.
+  5. Jab tumhe pata karna hota hai ki program kaun-kaun si shared libraries use kar raha hai, tab readelf -d use hota hai.
+  6. Jab tumhe dynamic linking ya runtime adjustments (relocation entries) dekhni hoti hain, tab readelf -r use hota hai.
+  7. Jab tumhe CPU architecture ya system-specific details samajhni hoti hain, tab readelf -A use hota hai.
+  8. Jab tumhe ek baar me poori ELF file ka overview (full analysis) chahiye hota hai, tab readelf -a use hota hai.
+
+3. objdump - objdump ek Linux tool hai jo binary file (ELF) ko machine-level aur assembly level me break karke dikhata hai, taaki tum samajh sako ki program actually execute kaise ho raha hai.
+- **Major Flags**
+  1. objdump -d : Ye binary ko assembly (CPU instructions) me convert karke dikhata hai, jisse pata chalta hai program actually kaise execute ho raha hai.
+  
+  2. objdump -D : Ye poori file ke har section ka assembly dump karta hai, even non-executable parts bhi, deep analysis ke liye.
+  
+  3. objdump -S : Ye assembly ke saath source code mix karke dikhata hai, agar debugging symbols present ho.
+  
+  4. objdump -h : Ye binary ke sections ka overview deta hai (like .text, .data, .bss), structure samajhne ke liye.
+  
+  5. objdump -t : Ye binary ke symbols (functions, variables) dikhata hai, jaise main, printf, etc.
+  
+  6. objdump -x : Ye full information dump karta hai (headers + sections + symbols ek saath).
+  
+  7. objdump -r : Ye relocation entries dikhata hai, matlab dynamic linking ka internal adjustment kaise ho raha hai.
+  
+  8. objdump -s : Ye binary ka raw hex + ASCII content dikhata hai (memory-level view).
+- **When is it use?**
+  1. Jab tumhe kisi binary ka assembly code dekhna hota hai, tab objdump -d use hota hai.
+  2. Jab tumhe samajhna hota hai ki program CPU instructions me kaise execute ho raha hai, tab objdump use hota hai.
+  3. Jab tum reverse engineering kar rahe hote ho aur binary ka logic samajhna hota hai bina source code ke, tab objdump use hota hai.
+  4. Jab tumhe functions (jaise main, printf) ka low-level behavior dekhna hota hai, tab objdump -t use hota hai.
+  5. Jab tumhe binary ka full structure + headers + symbols ek saath dekhna hota hai, tab objdump -x use hota hai.
+  6. Jab tumhe program ka memory content (hex + ASCII form) analyze karna hota hai, tab objdump -s use hota hai.
+  7. Jab tumhe samajhna hota hai ki binary dynamic linking ya relocation kaise handle karta hai, tab objdump -r use hota hai.
+  8. Jab tumhe debugging symbols ke saath source code + assembly mixed view chahiye hota hai, tab objdump -S use hota hai.
+
+4. nm - nm ek Linux tool hai jo ELF binary (ya object file) ko read karke uske andar ke saare symbols jaise functions, global variables, aur external undefined references ke names aur addresses ko list karta hai, taaki tum bina code run kiye samajh sako ki program ke andar kya-kya “named components” exist karte hain aur kaunse functions internally defined hain ya external libraries se link hone wale hain.
+- **Major Flags**
+1. nm file : Binary ke saare symbols (functions + variables) dikhata hai.
+
+2. nm -g file : Sirf global symbols dikhata hai (jo externally visible hote hain).
+
+3. nm -u file : Sirf undefined symbols dikhata hai (jo external libraries se aayenge).
+
+4. nm -C file : C++ names ko readable form me demangle karta hai (mangled names ko normal banata hai).
+
+5. nm -n file : Symbols ko address order (memory order) me sort karke dikhata hai.
+
+6. nm -a file : saare symbols (even hidden/debug) bhi show karta hai.
+- **When is it use?**
+  1. Jab tumhe kisi binary ke andar ke functions ke names (jaise main, custom functions) dekhne hote hain, tab nm use hota hai.
+  2. Jab tumhe samajhna hota hai ki program me kaun-kaun se global variables define hain, tab nm use hota hai.
+  3. Jab tum reverse engineering kar rahe hote ho aur binary ke hidden symbol names identify karne hote hain, tab nm use hota hai.
+  4. Jab tumhe pata karna hota hai ki program ke andar kaunse functions external libraries se link honge (undefined symbols), tab nm -u use hota hai.
+  5. Jab tum debugging ya vulnerability analysis kar rahe hote ho aur function mapping samajhni hoti hai, tab nm use hota hai.
+  6. Jab tumhe C++ binaries ke mangled function names ko readable form me dekhna hota hai, tab nm -C use hota hai.
+  7. Jab tumhe binary ke symbols ko memory address order me analyze karna hota hai, tab nm -n use hota hai.
+
+5. strings - strings ek Linux tool hai jo binary file ko scan karke uske andar se saara human-readable text (jaise messages, passwords, URLs, error strings, function names aur hidden hints) extract karke show karta hai, taaki tum bina program run kiye samajh sako ki us binary ke andar kya information chhupi hui hai.
+
+- **Major Flags**
+1. strings file : Binary ke andar se saare readable text (ASCII strings) extract karta hai, jaise messages, functions, URLs, etc.
+
+2. strings -n <number> : Sirf minimum length wale strings show karta hai (noise kam karne ke liye), jaise strings -n 6 file.
+
+3. strings -e l file : Binary ke andar se Unicode / 16-bit strings bhi extract karta hai, jo normal strings me nahi dikhti.
+
+4. strings -t x file : Har string ke saath uska hex memory offset bhi show karta hai, jisse pata chalta hai string file ke kis location par hai.
+- **When is it use?**
+1. Jab tumhe kisi binary ke andar se hidden readable text (messages, passwords, URLs) nikalne hote hain, tab strings use hota hai.
+2. Jab tum reverse engineering kar rahe hote ho aur bina run kiye clues collect karne hote hain, tab strings use hota hai.
+3. Jab tum malware analysis kar rahe hote ho aur suspicious words jaise “http”, “/bin/bash”, “cmd” dhoondhne hote hain, tab strings use hota hai.
+4. Jab binary stripped hoti hai (symbols remove hote hain) aur nm useful nahi hota, tab strings use hota hai.
+5. Jab tumhe samajhna hota hai ki program kaunse libraries, functions ya dependencies use kar raha hai, tab strings use hota hai.
+6. Jab tumhe kisi unknown file ka quick initial idea lena hota hai bina deep analysis ke, tab strings use hota hai.
+
+6. size - size function ek Linux tool hai jo kisi binary ya object file ke **different sections (.text, .data, .bss) ka memory size batata hai aur total program kitna space occupy karega woh show karta hai.
+- **Major Flags**
+1. size file : Ye binary ke sections ka size show karta hai:
+  - .text (code size)
+  - .data (initialized data)
+  - .bss (uninitialized data)
+  - total size
+2. size -A file: Ye ELF ke har section ka detailed breakdown + architecture info dikhata hai, deeper analysis ke liye.
+
+3. size -B file : Ye output ko BSD-style format me show karta hai (format change, same data).
+- **When is it use?**
+  1. Jab tumhe kisi ELF binary ka memory footprint (kitna space use hua hai) dekhna hota hai, tab size use hota hai.
+  2. Jab tum program build karte ho aur check karna hota hai ki code (.text) aur data (.data/.bss) kitna memory le raha hai, tab size use hota hai.
+  3. Jab tum embedded systems ya optimization kar rahe hote ho aur binary ko lightweight banana hota hai, tab size use hota hai.
+  4. Jab tum compiler output analyze kar rahe hote ho aur dekhna hota hai ki changes ke baad binary size badha ya ghata, tab size use hota hai.
+  5. Jab tum reverse engineering ke starting stage me ho aur quick idea lena hota hai program ka memory structure ka, tab size use hota hai.
 7. ldd
 8. hexdump
 9. xxd
