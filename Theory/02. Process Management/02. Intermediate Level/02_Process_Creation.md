@@ -410,25 +410,32 @@ Shared Library ek aisi library file (.so) hoti hai jiska code ek hi jagah disk a
 6. Library ko update karna aasaan banane ke liye Shared Libraries use ki jati hain, kyunki library alag file me hoti hai.
 7. Executable file ka size chhota rakhne ke liye Shared Libraries use ki jati hain.
 8. Program ko modular aur maintainable banane ke liye Shared Libraries use ki jati hain.
-- **Static Library vs Dynamic Library**
-| Feature | Static Library (.a) | Shared Library (.so) |
-|----------|--------------------|---------------------|
-| Linking Time | Library code compile/link time par executable ke andar copy ho jata hai. | Library code run time par load hota hai. |
-| Executable Size | Executable ka size bada hota hai. | Executable ka size chhota hota hai. |
-| Code Storage | Har executable apni library code ki copy rakhta hai. | Library code alag `.so` file me rehta hai. |
-| RAM Usage | RAM zyada consume hoti hai. | RAM kam consume hoti hai kyunki library share hoti hai. |
-| Sharing | Code share nahi hota. | Multiple programs ek hi library share kar sakte hain. |
-| Dependency | Executable library ke bina bhi chal sakta hai. | Required `.so` file run time par available honi chahiye. |
-| Updates | Library update hone par executable ko dobara build karna padta hai. | Library update hone par executable ko rebuild karne ki zaroorat nahi hoti. |
-| Portability | Executable ko dusre system par le jana aasan hota hai. | Required libraries bhi saath available honi chahiye. |
-
----
 
 ## 1.6 Dynamic Linking/loader
-
-## 1.7 Symbol Resolution
-## 1.8 Relocation PLT/GOT
-
-
+### 1. Dynamic Section
+Ya ELF file ka ek section hota hai (.dynamic) joki ek special data area hota hai jo runtime dynamic linker ko btata hai ki program ko chalane ka lia kaun-kaun sa shared libraries cahiye, unke symbols kaisa resolve honge aur PLT/GOT jaisa relocation aur linking mechanisms ko kaisa handle karna hai. Basically ya runtime linking ka control center hota hai. 
+- **Functional Categories of Dynamic Entries**
+1. Shared Libraries info
+2. Symbol & String Tables
+3. Hash Tables
+4. Relocation info
+5. PLT/GOT related
+6. Initialization/Finalization
+7. Loading/Memory info
+8. Versioning
+9. Search Path
+### 2. NEEDED Entries
+### 3. Shared Library Search
+### 4. Shared Library Mapping
+### 5. Symbol Table
+### 6. Dynamic Symbol Table
+### 7. Symbol Resolution
+### 8. Relocation
+### 9. GOT
+### 10. PLT
+### 11. Lazy Binding
+### 12. Eager Binding
+### 13. Runtime Symbol Resolution Flow
+### 14. Complete Dynamic Linking Execution Flow
 
 ## complete execution flow
