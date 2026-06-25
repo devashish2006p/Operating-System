@@ -295,10 +295,140 @@ Jab compiler aur linker source code ko machine code ma convert karte hai, tab li
   3. Jab tum embedded systems ya optimization kar rahe hote ho aur binary ko lightweight banana hota hai, tab size use hota hai.
   4. Jab tum compiler output analyze kar rahe hote ho aur dekhna hota hai ki changes ke baad binary size badha ya ghata, tab size use hota hai.
   5. Jab tum reverse engineering ke starting stage me ho aur quick idea lena hota hai program ka memory structure ka, tab size use hota hai.
-7. ldd
-8. hexdump
-9. xxd
-10. strace
-11. ltrace
-12. gdb
+
+7. ldd (List Dynamic Libraries Dependencies) - ldd ek Linux tool hai jo kisi ELF executable ko run kiye bina batata hai ki ye binary kaun-kaun si shared libraries (.so files) par depend karti hai aur runtime par un libraries ko system me kahan se load kiya jayega.
+- **Major Flags**
+  1. ldd file : Binary ki saari shared library dependencies aur unke locations dikhata hai.
+  
+  2. ldd -v file : Libraries ke saath version information bhi dikhata hai, jisse pata chalta hai binary ko kaunsi library versions chahiye.
+  
+  3. ldd -u file : Unused libraries dikhata hai, yani linked to hain lekin actually use nahi ho rahi.
+  
+  4. ldd -r file : Shared libraries ke functions aur relocations ko check karta hai aur missing symbols ki report deta hai.
+  
+  5. ldd -d file : Data relocations check karta hai aur runtime linking issues detect karta hai.
+- **When is it use?**
+  1. Jab program run nahi ho raha ho aur dependency issue check karna ho.
+  2. Jab dekhna ho ki binary kaun-kaun si .so libraries use karti hai.
+  3. Jab reverse engineering me binary ke external dependencies samajhne ho.
+  4. Jab missing library ya missing symbol error troubleshoot karna ho.
+  5. Jab dynamic linking ka behavior analyze karna ho.
+
+8. hexdump - hexdump ek Linux tool hai jo kisi file (ELF, image, text, disk, memory dump, etc.) ke raw bytes ko hexadecimal aur ASCII format me dikhata hai, taaki tum file ke sabse lowest level data ko exactly waise dekh sako jaise woh storage ya memory me physically stored hota hai, bina kisi interpretation ya processing ke.
+- **Major Flags**
+  1. hexdump -C file : Sabse important flag; file ke bytes ko hex + ASCII side-by-side dikhata hai, jisse raw data aur readable text dono ek saath nazar aate hain.
+  
+  2. hexdump -n <number> file : Sirf pehle <number> bytes dikhata hai, jab tum file ka initial portion (jaise ELF magic bytes) dekhna chahte ho.
+  
+  3. hexdump -s <offset> : Kisi specific offset se reading start karta hai, jab tum file ke beech ke kisi region ko inspect karna chahte ho.
+  
+  4. hexdump -C -s <offset> -n <number> file : Kisi exact location se exact number of bytes dekhne ke liye (real-world analysis me bahut common combination).
+  
+  5. hexdump file : Default hex dump deta hai, lekin practical analysis me log zyada tar -C hi use karte hain.
+- **When is it use?**
+  1. Jab tum kisi file ke raw bytes ko exactly waise dekhna chahte ho jaise woh disk ya memory me stored hain, tab hexdump use hota hai.
+  2. Jab tum verify karna chahte ho ki file sach me ELF file hai ya nahi, tab ELF magic bytes (7f 45 4c 46) dekhne ke liye hexdump use hota hai.
+  3. Jab tum kisi file ke specific offset (particular byte location) par kya data rakha hai ye dekhna chahte ho, tab hexdump use hota hai.
+  4. Jab tum reverse engineering kar rahe hote ho aur binary ke actual byte-level content ko inspect karna hota hai, tab hexdump use hota hai.
+  5. Jab tum dekhna chahte ho ki koi string, number, address ya structure file ke andar physically kaise stored hai, tab hexdump use hota hai.
+  6. Jab higher-level tools (file, readelf, strings) jo information de rahe hain usko raw bytes se verify karna hota hai, tab hexdump use hota hai.
+  7. Jab tum file corruption, binary patching ya forensic analysis kar rahe hote ho aur exact bytes check karne hote hain, tab hexdump use hota hai.
+
+9. xxd - xxd ek tool hai jo kisi file ke raw bytes ko hexadecimal format me dikhata hai aur zaroorat padne par hexadecimal data ko wapas original binary file me convert bhi kar sakta hai.
+- **Major Flags**
+  1. xxd file : File ke raw bytes ko hex + ASCII format me dikhata hai.
+  
+  2. xxd -l <bytes> file : Sirf shuru ke <bytes> bytes dikhata hai. ELF header ke starting bytes dekhne ke liye useful.
+  
+  3. xxd -s <offset> file
+  File ke kisi specific offset se dump start karta hai.
+  
+  4. xxd -c <number> file : Ek line me kitne bytes dikhane hain, ye control karta hai.
+  
+  5. xxd -b file : Bytes ko hexadecimal ki jagah binary (0 aur 1) me dikhata hai.
+  
+  6. xxd -r : Hex dump ko wapas original binary file me convert karta hai.
+
+
+- **When is it use?**
+  Jab tum file ke raw bytes ko dekhna chahte ho.
+  Jab ELF file ke starting bytes ya specific offset inspect karna ho.
+  Jab tum binary patching kar rahe ho.
+  Jab tum hex data ko wapas binary file me convert karna chahte ho.
+  Jab tumhe hexdump jaisa output chahiye lekin reverse conversion ki capability bhi chahiye.
+
+10. strace - strace ek Linux tool hai jo kisi program ke execution ke dauran kernel ke saath hone wali saari system calls (jaise open(), read(), write(), execve()) aur unke results ko monitor karke dikhata hai.
+- **Major Flags**
+  1. strace program : Ye program ke execution ke dauran kernel ko bheji gayi har system call aur uska return result dikhata hai.
+  
+  2. strace -o output.txt program : Ye program ki saari system calls ko terminal par dikhane ke bajay ek file me save karta hai taaki baad me aaram se analysis kiya ja sake.
+  
+  3. strace -e trace=open,read,write program : Ye sirf unhi system calls ko dikhata hai jo tum specify karte ho aur baaki sab system calls ko hide kar deta hai taaki output me unnecessary noise kam ho jaye.
+  
+  4. strace -f program : Ye main process ke saath-saath uske dwara create kiye gaye saare child processes aur threads ki system calls ko bhi trace karta hai.
+  
+  5. strace -p PID : Ye kisi already running process ke saath attach hokar uski current aur future system calls ko live monitor karta hai bina process restart kiye.
+  
+  6. strace -c program : Ye program ke khatam hone ke baad har system call kitni baar execute hui aur usme kitna time laga uska statistical summary report deta hai.
+  
+  7. strace -t program : Ye har system call ke saamne exact timestamp add karta hai taaki pata chale kis time par kaunsi system call execute hui thi.
+  
+  8. strace -e trace=file program : Ye sirf file-related system calls jaise file open karna, read karna, write karna aur close karna dikhata hai aur baaki categories ki system calls ko filter kar deta hai.
+- **When is it use?**
+  1. Jab tum dekhna chahte ho ki program execution ke dauran kernel ko kaun-kaun si system calls bhej raha hai, tab strace use hota hai.
+  2. Jab tum samajhna chahte ho ki ELF file process banne ke baad kernel ke saath kaise interact kar rahi hai, tab strace use hota hai.
+  3. Jab koi program error de raha ho aur tum pata lagana chahte ho ki kis system call par failure hua, tab strace use hota hai.
+  4. Jab tum dekhna chahte ho ki program kaunsi files open, read, write aur close kar raha hai, tab strace use hota hai.
+  5. Jab tum dekhna chahte ho ki program memory allocate karne ke liye kernel se kya requests kar raha hai, tab strace use hota hai.
+  6. Jab tum dekhna chahte ho ki program network connections kab aur kaise establish kar raha hai, tab strace use hota hai.
+  7. Jab tum dekhna chahte ho ki program naye processes ya threads create kar raha hai ya nahi, tab strace use hota hai.
+  8. Jab tum malware ya unknown binary ka behavior analyze karna chahte ho aur dekhna chahte ho ki woh system ke saath kya-kya actions perform kar rahi hai, tab strace use hota hai.
+  9. Jab tum OS aur Linux process execution ko practical level par samajhna chahte ho, tab strace use hota hai.
+  10. Jab tum kisi running process ki live activity monitor karna chahte ho bina usse restart kiye, tab strace use hota hai.
+
+11. ltrace - ltrace ek Linux tool hai jo kisi program ke execution ke dauran shared libraries (jaise libc.so) ke functions calls (jaise printf(), malloc(), puts()) aur unke arguments/return values ko monitor karke dikhata hai.
+- **Major Flags**
+  - Wahi flags joki strace ma use hota hai kafi had tak ishme v use hote hai.
+- **When is it use?**
+1. Jab tum dekhna chahte ho ki program execution ke dauran kaun-kaun se library functions (jaise printf(), malloc(), strlen()) call kar raha hai, tab ltrace use hota hai.
+2. Jab tum reverse engineering kar rahe hote ho aur binary ke internal behavior ko library function calls ke through samajhna chahte ho, tab ltrace use hota hai.
+3. Jab tum dekhna chahte ho ki program memory allocation, string handling ya input/output ke liye kaunse library functions use kar raha hai, tab ltrace use hota hai.
+4. Jab tum kisi unknown ya suspicious binary ka analysis kar rahe hote ho aur uske library-level actions ko observe karna chahte ho, tab ltrace use hota hai.
+5. Jab tum program → library → kernel ke execution flow ko samajhna chahte ho aur dekhna chahte ho ki system call hone se pehle kaunsa library function call hua tha, tab ltrace use hota hai.
+
+12. gdb - GDB (GNU Debugger) ek debugging tool hai jo kisi running ya paused program ko step-by-step execute karne, variables ki values dekhne, memory inspect karne, registers analyze karne aur program crash ya unexpected behavior ka exact reason dhoondhne ke liye use hota hai.
+            (Ishko bad ma padhengen advance level par)
     
+## 1.5 Shared Libraries
+Shared Library ek aisi library file (.so) hoti hai jiska code ek hi jagah disk aur memory me store hota hai aur usse ek hi time par bahut saare programs share karke use kar sakte hain. Ya other files ka trah he disk par stored rehti hai. 
+- **Purpose**
+1. Ek hi library code ko multiple programs ke beech share karne ke liye Shared Libraries use ki jati hain.
+2. Har executable ke andar same functions ka code copy karne se bachne ke liye Shared Libraries use ki jati hain.
+3. Disk space bachane ke liye Shared Libraries use ki jati hain kyunki library code alag file me rakha jata hai.
+4. RAM bachane ke liye Shared Libraries use ki jati hain kyunki ek hi library ko kai processes memory me share kar sakte hain.
+5. Code reuse karne ke liye Shared Libraries use ki jati hain taaki ek baar likha gaya code kai programs use kar saken.
+6. Library ko update karna aasaan banane ke liye Shared Libraries use ki jati hain, kyunki library alag file me hoti hai.
+7. Executable file ka size chhota rakhne ke liye Shared Libraries use ki jati hain.
+8. Program ko modular aur maintainable banane ke liye Shared Libraries use ki jati hain.
+- **Static Library vs Dynamic Library**
+| Feature | Static Library (.a) | Shared Library (.so) |
+|----------|--------------------|---------------------|
+| Linking Time | Library code compile/link time par executable ke andar copy ho jata hai. | Library code run time par load hota hai. |
+| Executable Size | Executable ka size bada hota hai. | Executable ka size chhota hota hai. |
+| Code Storage | Har executable apni library code ki copy rakhta hai. | Library code alag `.so` file me rehta hai. |
+| RAM Usage | RAM zyada consume hoti hai. | RAM kam consume hoti hai kyunki library share hoti hai. |
+| Sharing | Code share nahi hota. | Multiple programs ek hi library share kar sakte hain. |
+| Dependency | Executable library ke bina bhi chal sakta hai. | Required `.so` file run time par available honi chahiye. |
+| Updates | Library update hone par executable ko dobara build karna padta hai. | Library update hone par executable ko rebuild karne ki zaroorat nahi hoti. |
+| Portability | Executable ko dusre system par le jana aasan hota hai. | Required libraries bhi saath available honi chahiye. |
+
+---
+
+## 1.6 Dynamic Linking/loader
+
+## 1.7 Symbol Resolution
+## 1.8 Relocation PLT/GOT
+
+
+
+## complete execution flow
