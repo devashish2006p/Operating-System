@@ -4,15 +4,32 @@ ELF (Executable and Linkable Format) ek standard executable file format hai jo m
 Jab compiler aur linker source code ko machine code ma convert karte hai, tab linker us machine code aur required metadata ko ELF format ma package karta hai aur bani hui file SSD/HDD par ek normal file ki tarah store ho jata hai. 
 
 ## 1.1 Internal Structure 
-1. ELF Header - Ya ELF file ka identity card hota hai jo batata hai ki ye ELF hai, architecture kya hai, entry point kya hai etc.
-2. Program Header Table - Kernel ko btata hai ki file ka kaunse parts memory ma load karna hai aur kahan load karne hai.
-3. .text - Program ka actual machine code (CPU instructions) yahan hota hai.
-4. .rodata - Ya read only data hota hai.
-5. .data - Ya initialized global/static variables hote hai.
-6. .bss - Ya uninitialized global/static variables hote hai.
-7. Symbol table - Ya functions aur variables ka names ki information hota hai. Ex - main, printf, scanf.
-8. Dynamic Linking Information - Kaunsi shared libraries cahiye wo cheez store hota hai yaha par.
-9. Section Header Table - Debugger, linker aur development tools ko btata hai ki sections kahan hai. 
+1. ELF Header - Ya ek bilkul beginning (offset 0) par maujood ek fixed size metadata structure hota hai jo Linux Kernel aur ELF tools ko btata hai ki ye file kis type ki hai, kis architecture ka lia bani hai, ishke ander baaki important structures kahan hai aur program execution kahan sa start hoga.
+Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.     
+- **Internal Fields**
+  1. e_ident - e_ident ELF Header ka pehla aur sabse important field hota hai, jo ELF file ki basic identity (pehchan) store karta hai. Isme aisi information hoti hai jisse kernel aur ELF tools turant pehchan lete hain ki ye file waqai ELF hai, kis architecture class (32/64-bit) ki hai, kis byte order (endianness) ka use karti hai, kis ABI ke liye bani hai, aur ELF format ka kaunsa version use kar rahi hai. Ya 16 bytes ka hota hai 32 aur 64 dono he types ka architecture ma.
+
+  2. e_type - e_type ELF Header ka ek field hota hai jo batata hai ki ye ELF file kis type ki hai, yani system is file ko kis purpose ke liye use karega. Simple language ma ya ELF file ka category/type batane wala field hai. Ya dono he types ka architecture ma same 2 bytes ka hota hai. 
+
+  3. e_machine - e_machine ELF Header ka field hota hai jo batata hai ki ye ELF file kis processor architecture (CPU architecture) ke liye banayi gayi hai, taaki operating system aur loader sahi processor ke hisaab se is file ko handle kar saken. Ya 2 bytes ka hota hai joki 32 aur 64 dono he architecture ma same size ka hota hai.
+
+  4. e_version - e_version ELF Header ka field hota hai jo batata hai ki ELF file ELF format ke kis version ko follow karti hai, taaki loader aur tools us format ko sahi tarah interpret kar saken. Ya 4 bytes ka hota hai 32 aur 64 dono types ka architecture ma. 
+  5. e_entry - ELF Header ka field hota hai jo program ke entry point (starting memory address) ko store karta hai, jahan se loader program ka execution shuru karwata hai. Ya 32 bits architecture ma 4 bytes ka hota hai aur 64 bits architecture ma 8 bytes ka hota hai. 
+  6. e_phoff - e_phoff ELF Header ka field hota hai jo ELF file ke beginning se Program Header Table tak ka byte offset store karta hai, taaki loader us table ko locate kar sake. Ya 32 bits architecture ma 4 bytes ka hota hai aur 64 bits architecture ma 8 bytes ka hota hai. 
+  7. e_shoff - e_shoff ELF Header ka field hota hai jo ELF file ke beginning se Section Header Table tak ka byte offset store karta hai, taaki tools us table ko locate kar saken. Ya 32 bits architecture ma 4 bytes ka hota hai aur 64 bits architecture ma 8 bytes ka hota hai. 
+  8. e_flags - e_flags ELF Header ka field hota hai jo processor architecture ya operating system se related additional flags aur special configuration information store karta hai. Ya dono he architecutre ma same 4 bytes ka he hota hai.
+  9. e_ehsize - e_ehsize ELF Header ka field hota hai jo poore ELF Header ka total size bytes me store karta hai, taaki loader ko header ki exact length pata chal sake. Ya dono he types of architecture ma 2 bytes ka hota hai. 
+  10. e_phentsize - e_phentsize ELF Header ka field hota hai jo Program Header Table ki ek entry ka size bytes me store karta hai, taaki loader har entry ko sahi tarah read kar sake. Ya dono he types of architecture ma same 2 bytes ka hota hai. 
+  11. e_phnum - e_phnum ELF Header ka field hota hai jo Program Header Table me total kitni entries hain, uski sankhya store karta hai. Ya 2 bytes ka hota hai dono he types of architectures ma. 
+  12. e_shentsize - e_shentsize ELF Header ka field hota hai jo Section Header Table ki ek entry ka size bytes me store karta hai, taaki tools har section header ko sahi tarah read kar saken. Ya 2 bytes ka hota hai 32 aur 64 dono types of architecture ma. 
+  13. e_shnum - e_shnum ELF Header ka field hota hai jo Section Header Table me total kitni section entries hain, uski sankhya store karta hai. Ya 2 bytes ka hota hai 32 aur 64 dono types ka architecture ma. 
+  14. e_shstrndx - e_shstrndx ELF Header ka field hota hai jo Section Header Table me us entry ka index store karta hai jo section names wali string table (.shstrtab) ko represent karti hai, taaki tools har section ka naam dhoondh saken. Ya 2 bytes ka hota hai dono he types of architecture ma. 
+
+2. Program Header Table
+
+3. Sections
+
+4. Section Header Table 
 
 ## 1.2 Internal Mechnaism of ELF File Creation
 ### Phase 1: Source Code Exists
