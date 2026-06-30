@@ -25,12 +25,27 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
   13. e_shnum - e_shnum ELF Header ka field hota hai jo Section Header Table me total kitni section entries hain, uski sankhya store karta hai. Ya 2 bytes ka hota hai 32 aur 64 dono types ka architecture ma. 
   14. e_shstrndx - e_shstrndx ELF Header ka field hota hai jo Section Header Table me us entry ka index store karta hai jo section names wali string table (.shstrtab) ko represent karti hai, taaki tools har section ka naam dhoondh saken. Ya 2 bytes ka hota hai dono he types of architecture ma. 
 
-2. Program Header Table
+2. Program Header Table - Ya ELF file ka ek metadata table hota hai jo operating system ka loader (Kernel) ko btata hai ki ELF file ka kaun-kaun sa parts ko memory ma load karna hai, kahan load karna hai, kitna load karna hai aur kis permission ka sath load karna hai. Simple language me Program Header Table = Kernel ka lia loading instructions ka table. Ishka koi fixed size nhi hota hai balki e_phentsize * e_phnum karke ishka actual size nikala jata hai. 
+  - **Types of Entries in PHT**
+  1. PT_NULL - Ya ek special entry type hai jo ksi bhi segment ko represent nahi karti aur loader ise ignore kar deta hai, ishka use unused ya placeholder entry ka roop ma hota hai. 
 
+  2. PT_LOAD - PT_LOAD Program Header Table ki sabse important entry type hai, jo kernel ko batati hai ki ELF file ka kaunsa segment file se uthakar RAM me map/load karna hai, kitna load karna hai, kahan load karna hai, aur kis permission (Read/Write/Execute) ke saath load karna hai.
+ 
+  3. PT_DYNAMIC - PT_DYNAMIC Program Header Table ki ek entry type hai jo kernel aur especially dynamic linker (ld-linux) ko batati hai ki ELF file ka .dynamic segment memory me kahan hai, taaki wahan se shared libraries, relocation, symbol table aur dynamic linking se judi baaki sari information padhkar program ko sahi tarah run kiya ja sake.
+  
+  4. PT_INTERP - PT_INTERP Program Header Table ki ek entry type hai jo kernel ko batati hai ki kis dynamically linked ELF program ko run karne ke liye kaunsa dynamic linker (interpreter), jaise /lib64/ld-linux-x86-64.so.2, pehle load aur execute karna hai, taaki wahi aage shared libraries load karke original program start kar sake.
+  5. PT_NOTE - PT_NOTE Program Header Table ki ek entry hai jo kernel ya tools ko batati hai ki executable ki extra information (metadata), jaise Build ID aur ABI details, file me kahan rakhi hui hai.
+  6. PT_PHDR - Program Header Table ki ek entry type hai jo kernel ya loader ko batati hai ki Program Header Table khud memory me kahan map hua hai, taaki zarurat padne par program ya dynamic linker usi Program Header Table ko runtime me access kar sake.
+  7. PT_TLS - (Thread Local Storage) Program Header Table ki ek entry type hai jo loader ko batati hai ki thread-specific data (TLS) memory me kahan aur kitna allocate karna hai, taaki har thread ko us data ki apni alag private copy mile.
+  8. PT_GNU_EH_FRAME - PT_GNU_EH_FRAME Program Header Table ki ek GNU-specific entry type hai jo loader aur runtime libraries ko batati hai ki exception handling aur stack unwinding (.eh_frame_hdr) ki information memory me kahan hai, taaki crash, exception ya function return ke samay call stack ko sahi tarah trace kiya ja sake.
+  9. PT_GNU_STACK
+  10. PT_GNU_RELRO
+  11. PT_GNU_PROPERTY
 3. Sections
 
-4. Section Header Table 
-
+4. Section Header Table
+ 
+---
 ## 1.2 Internal Mechnaism of ELF File Creation
 ### Phase 1: Source Code Exists
 1. Programmer source code file create karta hai (jaise hello.c).
