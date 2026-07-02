@@ -38,12 +38,63 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
   6. PT_PHDR - Program Header Table ki ek entry type hai jo kernel ya loader ko batati hai ki Program Header Table khud memory me kahan map hua hai, taaki zarurat padne par program ya dynamic linker usi Program Header Table ko runtime me access kar sake.
   7. PT_TLS - (Thread Local Storage) Program Header Table ki ek entry type hai jo loader ko batati hai ki thread-specific data (TLS) memory me kahan aur kitna allocate karna hai, taaki har thread ko us data ki apni alag private copy mile.
   8. PT_GNU_EH_FRAME - PT_GNU_EH_FRAME Program Header Table ki ek GNU-specific entry type hai jo loader aur runtime libraries ko batati hai ki exception handling aur stack unwinding (.eh_frame_hdr) ki information memory me kahan hai, taaki crash, exception ya function return ke samay call stack ko sahi tarah trace kiya ja sake.
-  9. PT_GNU_STACK
-  10. PT_GNU_RELRO
-  11. PT_GNU_PROPERTY
-3. Sections
+  9. PT_GNU_STACK - PT_GNU_STACK Program Header Table ki ek GNU-specific entry type hai jo kernel ko batati hai ki process ki stack memory ko kis permission (Read, Write, aur Execute ya Non-Execute) ke saath create/map karna hai.
+  10. PT_GNU_RELRO - PT_GNU_RELRO Program Header Table ki ek GNU-specific entry type hai jo kernel aur dynamic linker ko batati hai ki program ki kuch sensitive memory (jaise .got ke kuch parts) initialization ke baad read-only kar deni hai, taaki unhe runtime me modify karke attack na kiya ja sake.
+  11. PT_GNU_PROPERTY - PT_GNU_PROPERTY Program Header Table ki ek GNU-specific entry type hai jo kernel aur loader ko batati hai ki is executable ke liye processor aur security se judi special properties (features) ki information memory me kahan rakhi hai, taaki program ko unke hisaab se safely aur correctly run kiya ja sake.
+
+  - **Fields in each entries**
+  1. p_type - p_type Program Header Entry ka sabse important field hai, jo loader ko batata hai ki ye entry kis type ki hai (jaise PT_LOAD, PT_DYNAMIC, PT_INTERP, PT_TLS), taaki uske hisaab se us entry ko process kiya ja sake.
+  2. p_flags - p_flags Program Header Entry ka field hai jo loader/kernel ko batata hai ki is segment ko RAM me kis permission ke saath map karna hai—Read (R), Write (W), Execute (X) ya inka combination.
+  3. p_offset - p_offset Program Header Entry ka field hai jo loader ko batata hai ki ELF file ke andar is segment ka data kis byte offset (kitne bytes aage) se shuru hota hai, taaki wahi se data uthakar RAM me map/load kiya ja sake.
+  4. p_vaddr - p_vaddr Program Header Entry ka field hai jo loader/kernel ko batata hai ki is segment ko process ki virtual memory (RAM ke virtual address space) me kis virtual address par map/load karna hai.
+  5. p_paddr - Program Header Entry ka field hai jo segment ka physical memory address store karta hai, lekin modern Linux user-space programs me ise kernel ignore karta hai aur iska practical use lagbhag nahi hota.
+  6. p_filesz - p_filesz Program Header Entry ka field hai jo loader ko batata hai ki is segment ke liye ELF file se kitne bytes ka data read karke RAM me load/map karna hai.
+  7. p_memsz - p_memsz loader/kernel ko batata hai ki is particular segment ke liye RAM me total kitni memory allocate/map karni hai, chahe usme se kuch data file me maujood ho ya na ho.
+  8. p_align - p_align Program Header Entry ka field hai jo loader/kernel ko batata hai ki is segment ko RAM me kis alignment boundary (jaise 4 KB page boundary) par map/load karna hai, taaki memory access sahi aur efficient rahe.
+
+
+3. Section - Section ELF file ka logical part hota hai jo compiler aur linker dwara ek hi type ke data (jaise code, initialized data, symbols, strings, relocation information, etc.) ko alag-alag organize karke store karne ke liye banaya jata hai.
+- **Internal Sections** 
+  - Code Sections : Ya ELF file ka ek section hai jishke kaam executable machine instructions ko organize aur store karna hota hai, aur ya machine instructions aur execution support code ko store karta hai. Ishko compiler banata hai aur linker final executable ma arrange karta hai aur loader/kernel memory ma map karta hai aur CPU in instructions ko execute karta hai. 
+    1. .text
+    2. .init
+    3. .fini
+    4. .plt
+    5. .plt.got
+    6. .plt.sec
+  - Read-only Data : Read-Only Data Sections ELF file ke wo sections hote hain jinhe compiler un sabhi data ko alag aur surakshit tarike se organize karke store karne ke liye banata hai jo program ke chalne ke dauran sirf padha (read) jata hai aur badla (write) nahi jana chahiye, linker in sections ko final executable me sahi jagah arrange karta hai, loader/kernel inhe memory me read-only permission ke saath map karta hai taaki koi program ya attacker in data ko runtime me modify na kar sake, aur program ka code, runtime libraries ya debugger zarurat padne par isi data ko padhkar program ko sahi tarike se chalate hain.
+    .rodata
+    .eh_frame
+    .eh_frame_hdr
+  - Writable Data
+    .data
+    .bss
+    .got
+    .got.plt
+    .init_array
+    .fini_array
+  - Dynamic Linking
+    .dynamic
+    .dynsym
+    .dynstr
+    .gnu.hash
+    .hash
+    .gnu.version
+    .gnu.version_r
+  - Relocation
+    .rela.dyn
+    .rela.plt
+  - Symbol & String Tables
+    .symtab
+    .strtab
+    .shstrtab
+  - Notes
+    .note.gnu.property
+    .note.gnu.build-id
+    .note.ABI-tag
 
 4. Section Header Table
+
  
 ---
 ## 1.2 Internal Mechnaism of ELF File Creation
