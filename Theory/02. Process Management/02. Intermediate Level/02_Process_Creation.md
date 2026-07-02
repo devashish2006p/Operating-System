@@ -66,14 +66,14 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
     .rodata
     .eh_frame
     .eh_frame_hdr
-  - Writable Data
+  - Writable Data - Writable Data Sections ELF file ke wo sections hote hain jinhe compiler un sabhi data ko alag aur vyavasthit tarike se organize karke store karne ke liye banata hai jinka value program ke chalne ke dauran badal sakta hai ya badalna zaruri hota hai, jaise initialized variables, uninitialized variables aur runtime me update hone wala writable data, linker in sections ko final executable ya shared library me sahi jagah arrange karta hai, loader/kernel inhe RAM me read aur write permissions ke saath map karta hai taaki program in data ko runtime me padh aur badal sake, aur program ka code, runtime libraries aur kabhi-kabhi dynamic linker bhi in sections ka upyog program ki state, variables aur runtime information ko maintain aur update karne ke liye karte hain.
     .data
     .bss
     .got
     .got.plt
     .init_array
     .fini_array
-  - Dynamic Linking
+  - Dynamic Linking - Dynamic Linking Sections ELF file ke wo sections hote hain jinhe compiler aur linker milkar isliye banate hain taaki program ko chalane ke liye zaruri shared libraries, unke symbols, function aur variable names, library dependencies aur dynamic linking se sambandhit metadata ko alag aur sangathit roop me store kiya ja sake; linker in sections me required dynamic linking information bhar kar final executable ya shared library banata hai, aur program ke load hone ya runtime ke dauran dynamic linker (ld-linux) inhi sections ko padhkar required shared libraries ko load karta hai, symbols ko resolve karta hai aur program ko un external libraries ke saath sahi tarike se jodkar chalata hai.
     .dynamic
     .dynsym
     .dynstr
@@ -81,7 +81,7 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
     .hash
     .gnu.version
     .gnu.version_r
-  - Relocation
+  - Relocation : Ya ELF file ka ek section hai joki relocation information ko rakhta hai ishka kaam hai un addresses ko store karke rakhna jinko baad ma fix/update karna hai, ya relocation entries (kin locations ka addresses badalne hai aur unse judi metadata) ko store karta hai. Compiler object files ka lia relocation information generate karta hai aur linker use final ELF ma required relocation sections ka roop ma arrange karta hai. Ishka use linker build time par karta hai aur dynamic linker runtime par karta hai. 
     .rela.dyn
     .rela.plt
   - Symbol & String Tables
