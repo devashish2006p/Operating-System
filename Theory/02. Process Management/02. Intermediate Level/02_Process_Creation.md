@@ -56,8 +56,8 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
 3. Section - Section ELF file ka logical part hota hai jo compiler aur linker dwara ek hi type ke data (jaise code, initialized data, symbols, strings, relocation information, etc.) ko alag-alag organize karke store karne ke liye banaya jata hai.
 - **Internal Sections** 
   - Code Sections : Ya ELF file ka ek section hai jishke kaam executable machine instructions ko organize aur store karna hota hai, aur ya machine instructions aur execution support code ko store karta hai. Ishko compiler banata hai aur linker final executable ma arrange karta hai aur loader/kernel memory ma map karta hai aur CPU in instructions ko execute karta hai. 
-    1. .text
-    2. .init
+    1. .text - Ya ELF ka primary executable code section hota hai jiska kaam executable machine instructions ko organize aur store karna hota hai aur ya program ka actual machine code (functions ki instructions) ko store karta hai. Ishko compiler banata hai aur linker final executable me combine karta hai. Ishka use loader/kernel memory ma map karne ka lia karta hai aur CPU isi section ki ko use karta hai instructions execute karne ka lia. 
+    2. .init - .init ELF file ka ek special code section hota hai jise compiler aur linker program ke main execution (main()) shuru hone se pehle chalne wali initialization instructions ko store karne ke liye banate hain. Is section ka purpose program ke runtime environment ko prepare karna hota hai, jaise runtime libraries ya initialization routines ko execute karna, taaki program execute hone se pehle sab zaruri setup complete ho jaye. Isme executable machine instructions store hote hain jo initialization ka kaam karte hain, na ki normal program logic. Program load hone ke baad loader aur dynamic linker runtime environment ko initialize karte waqt is section ki instructions ko execute karwate hain, aur uske baad control main() ya entry point ke normal execution flow ko de diya jata hai.
     3. .fini
     4. .plt
     5. .plt.got
@@ -84,11 +84,11 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
   - Relocation : Ya ELF file ka ek section hai joki relocation information ko rakhta hai ishka kaam hai un addresses ko store karke rakhna jinko baad ma fix/update karna hai, ya relocation entries (kin locations ka addresses badalne hai aur unse judi metadata) ko store karta hai. Compiler object files ka lia relocation information generate karta hai aur linker use final ELF ma required relocation sections ka roop ma arrange karta hai. Ishka use linker build time par karta hai aur dynamic linker runtime par karta hai. 
     .rela.dyn
     .rela.plt
-  - Symbol & String Tables
+  - Symbol & String Tables - Symbol & String Table Sections ELF file ke wo sections hote hain jinhe compiler aur linker program me maujood functions, variables, labels aur anya symbols ki pahchan (identity) aur unke naam ko sangathit roop me store karne ke liye banate hain, jisme symbol tables pratyek symbol se sambandhit jankari (jaise uska naam kis string se juda hai, uska address ya value, size aur anya attributes) rakhti hain aur string tables un symbols ke actual text names ko store karti hain; linker in sections ka upyog symbols ko identify aur resolve karne ke liye karta hai, dynamic linker runtime par external symbols ko resolve karne ke liye inka upyog karta hai, aur debugger, disassembler tatha anya binary analysis tools bhi inhi sections ki madad se binary ke machine addresses ko human-readable function aur variable names se jodkar program ko samajhte aur analyze karte hain.
     .symtab
     .strtab
     .shstrtab
-  - Notes
+  - Notes : Note Sections ELF file ke wo sections hote hain jinhe compiler, linker ya build tools program se sambandhit atirikt (supplementary) jankari ko sangathit roop me store karne ke liye banate hain, jisme program ke baare me aisi metadata rakhi jati hai jo program ke machine code ka hissa nahi hoti, jaise build identification, operating system ya ABI se sambandhit jankari, processor ya security properties aur anya descriptive information; loader, kernel, dynamic linker ya binary analysis tools zarurat padne par in note sections ko padhkar program ki compatibility, security features aur build se judi jankari prapt karte hain, lekin program ke normal instructions ko execute karne ke liye in sections ka seedha upyog nahi kiya jata.
     .note.gnu.property
     .note.gnu.build-id
     .note.ABI-tag
