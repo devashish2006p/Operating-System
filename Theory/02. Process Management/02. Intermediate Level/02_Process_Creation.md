@@ -52,7 +52,7 @@ Ishka size ELF32 ma 52 bytes ka hota hai aur ELF64 ma 64 bytes ka hota hai.
   7. p_memsz - p_memsz loader/kernel ko batata hai ki is particular segment ke liye RAM me total kitni memory allocate/map karni hai, chahe usme se kuch data file me maujood ho ya na ho.
   8. p_align - p_align Program Header Entry ka field hai jo loader/kernel ko batata hai ki is segment ko RAM me kis alignment boundary (jaise 4 KB page boundary) par map/load karna hai, taaki memory access sahi aur efficient rahe.
 
-
+---
 3. Section - Section ELF file ka logical part hota hai jo compiler aur linker dwara ek hi type ke data (jaise code, initialized data, symbols, strings, relocation information, etc.) ko alag-alag organize karke store karne ke liye banaya jata hai.
 - **Internal Sections** 
   - Code Sections : Ya ELF file ka ek section hai jishke kaam executable machine instructions ko organize aur store karna hota hai, aur ya machine instructions aur execution support code ko store karta hai. Ishko compiler banata hai aur linker final executable ma arrange karta hai aur loader/kernel memory ma map karta hai aur CPU in instructions ko execute karta hai. 
