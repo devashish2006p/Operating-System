@@ -35,11 +35,57 @@ User Command Enter karna Shell Command Execution ka pehla step hai, jisme user T
   - Ab receive phase khatam hota hai aur parsing phase shuru hota hai.
 2. Store – Command ko temporarily memory me store karti hai.
 3. Parse – Command ko todkar samajhti hai.
+  - Shell stored command ko parsing engine ko deti hai.
+  - Parser command string ko left se right read karna shuru karta hai.
+  - Parser command ko logical parts (tokens) me todta hai (jaise command name, arguments, operators, redirections).
+  - Parser har token ki type identify karta hai (command, argument, operator, etc.).
+  - Parser token sequence ko syntax rules ke according verify karta hai.
+  - Agar syntax error milti hai to parsing yahin stop ho jati hai aur Shell error return karti hai.
+  - Agar syntax sahi hoti hai to parser parsed command structure prepare karta hai.
+  - Ye parsed structure agle phase (Identification phase) ko handover kar diya jata hai.
 4. Validate – Syntax sahi hai ya nahi, check karti hai.
+  - Shell parsed tokens ko validation engine ko deti hai.
+  - Validation engine command ki syntax ko shell grammar ke against check karti hai.
+  - Har operator (|, >, <, &&, ; etc.) ki position verify karti hai.
+  - Check karti hai ki required operands/arguments maujood hain ya nahi.
+  - Check karti hai ki tokens ka sequence valid hai ya nahi.
+  - Agar koi syntax error milti hai to validation turant stop ho jati hai.
+  - Shell syntax error message prepare karti hai aur execution ko aage nahi badhati.
+  - Agar sab valid hai to validated command structure ko Identification phase me bhej diya jata hai.
 5. Identify – Built-in hai ya external, decide karti hai.
+  - Shell parsed command structure se command name nikalti hai.
+  - Shell apni built-in command list me us command ko search karti hai.
+  - Agar built-in mil jata hai to command ko "Built-in" mark kar deti hai.
+  - Agar built-in nahi milta to command ko "External Command" mark kar deti hai.
+  - Agar external mark hua hai to agla phase (Location) start hota hai.
+  - Agar built-in mark hua hai to Location phase skip ho jata hai aur Shell direct execution ke liye prepare karti hai.
 6. Locate – Agar external hai to executable locate karti hai.
+  - Shell command name ko Location module ko deti hai.
+  - Shell executable search path (PATH) ko read karti hai.
+  - Shell PATH me diye gaye directories ko ek-ek karke search karti hai.
+  - Har directory me us command naam ki executable file ko check karti hai.
+  - Jab matching executable mil jata hai, uska complete path determine karti hai (jaise /usr/bin/ls).
+  - Verify karti hai ki file executable hai aur use run kiya ja sakta hai.
+  - Executable ka full path execution preparation phase ko handover kar deti hai.
+  - Agar executable nahi milta, to search stop karke "command not found" error prepare karti hai.
 7. Prepare – Execution ke liye required information ready karti hai.
-
+  - Shell executable ka full path receive karti hai.
+  - Shell command ke arguments ko arrange karti hai.
+  - Shell execution ke liye required information (path + arguments + environment) ko ek execution structure me organize karti hai.
+  - Shell verify karti hai ki execution ke liye saari required information available hai.
+  - Execution request ko final form me prepare karti hai.
+  - Prepared execution request ko Step 3 (Required System Calls) ke liye handover kar deti hai.
 ## 3. Shell required System calls karta hai. 
-
+Shell required system calls karti hai, yani user ki command ko execute karwane ke liye Kernel se zaroori services maangne ke liye appropriate system calls invoke karti hai.
 ## 4. Shell kernel sa response/exit status receive karke user ko output dikhata hai. 
+Shell Kernel se command ka execution result aur exit status receive karti hai, phir us result ko process karke Terminal ko bhejti hai taaki user command ka final output ya error message dekh sake.
+
+# 5. Shell Information Tools 
+1. echo - echo ek shell built-in command hai jo kisi text, variable ki value ya escape sequence ko terminal ke standard output par display karta hai; internally shell echo command ko directly execute karke diye gaye arguments ko parse karta hai, variables ($VAR) ko expand karta hai aur final string ko output stream (stdout) me bhej deta hai; iska use tab kiya jata hai jab hume terminal ya shell script me koi information print karni ho, variable ki value check karni ho, ya debugging ke time shell ke andar ki state dekhni ho.
+2. type - type ek shell built-in command hai jo ye identify karta hai ki diya gaya command shell ke andar built-in hai, alias hai, function hai ya external executable file hai; internally shell command lookup process ko use karke pehle apne environment me command ke type ko search karta hai aur phir uska source/path batata hai; iska use tab kiya jata hai jab hume samajhna ho ki koi command actually kaha se execute ho rahi hai, debugging karni ho ya command ke behavior ko verify karna ho.
+3. which - which ek external command hai jo kisi command ke executable file ka exact location (path) find karta hai; internally ye system ke PATH environment variable me listed directories ko ek-ek karke search karta hai aur jaha pehli baar matching executable milta hai uska absolute path return karta hai; iska use tab kiya jata hai jab hume pata karna ho ki koi command system me kaha installed hai ya kaunsa executable version run ho raha hai.
+4. whereis - whereis ek command-line utility hai jo kisi program ke binary executable, source code aur manual (man page) files ke locations ko find karta hai; internally ye predefined system directories aur database/standard paths me search karke command se related files ke possible locations return karta hai; iska use tab kiya jata hai jab hume kisi software/command ki installation files, binary path ya documentation ka location ek saath pata karna ho.
+5. env/printenv - env / printenv ek command-line utility hai jo system ke environment variables ko display ya temporary environment ke saath command execute karne ka kaam karti hai; internally ye process ke environment block (memory area jaha shell ke variables jaise PATH, HOME, USER stored hote hain) ko read karke unki key-value pairs ko output karta hai; iska use tab kiya jata hai jab hume system environment ki configuration dekhni ho, kisi variable ki value check karni ho, ya program ko specific environment ke saath run karna ho.
+6. echo $? - echo $ ka use shell me kisi variable ki value ko terminal par print karne ke liye hota hai, jaha $ shell ko signal deta hai ki uske baad likha gaya naam ek variable hai jisko expand karna hai; internally shell pehle $VARIABLE_NAME ko detect karta hai, apne variable table/environment se uski stored value lookup karta hai aur phir us value ko echo command ke argument ke roop me pass karke standard output (terminal) par display kar deta hai; iska use tab kiya jata hai jab hume kisi shell variable ya environment variable ki current value check, debug ya script ke andar use karni hoti hai.
+7. strace - strace ek debugging aur system monitoring tool hai jo kisi running program ke dwara kiye ja rahe system calls aur signals ko trace karta hai; internally ye Linux ke ptrace() mechanism ka use karke process execution ko observe karta hai aur jab process kernel se koi service (jaise open(), read(), write(), execve(), fork()) request karta hai to us system call ka naam, arguments aur return value capture karke dikhata hai; iska use tab kiya jata hai jab hume samajhna ho ki koi program kernel ke saath kaise interact kar raha hai, error/debugging karni ho, file access, permission issue ya process behavior analyze karna ho.
+8. bash - bash (Bourne Again SHell) ek command-line interpreter aur Unix/Linux shell hai jo user ke commands ko read, parse aur execute karta hai; internally ye user input ko tokens me divide karta hai, variables expand karta hai, command lookup karta hai aur phir zarurat ke according system calls (fork(), execve() etc.) ke through programs ko run karta hai; iska use tab kiya jata hai jab hume Linux system ke saath interact karna ho, commands execute karni ho, shell scripts chalani ho ya ek controlled shell environment test karna ho.
