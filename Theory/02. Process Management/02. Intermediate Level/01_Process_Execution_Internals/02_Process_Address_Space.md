@@ -11,3 +11,12 @@ Process Address Space wo virtual memory layout hai jo kernel har process ke liye
 7. Shared Libraries - Shared Library ek aisi file hoti hai jisme reusable machine code (functions/instructions) store hote hain aur jise ek hi samay par multiple processes share karke use kar sakte hain.
 8. Stack - Stack Process Address Space ka wo region hai jahan function calls se related temporary data store hota hai.
 9. Kernel Space - Kernel Space virtual address space ka wo privileged region hai jahan Operating System ka kernel code, kernel data, device drivers aur core system components mapped hote hain, aur jise sirf kernel mode me CPU access kar sakta hai.
+
+# 3. Tools for analysis of Process Address Space 
+1. /proc/<PID>/maps - /proc/<PID>/maps Linux ke /proc virtual filesystem ki ek pseudo-file hai jo Kernel se real-time me us running process ke memory mappings (address ranges, permissions, mapped files aur regions) ki information read karke user ko dikhati hai; ise Process Address Space ko inspect aur analyze karne ke liye use kiya jata hai.
+
+2. /proc/<PID>/smaps - /proc/<PID>/smaps Linux ke /proc virtual filesystem ki ek pseudo-file hai jo Kernel se real-time me process ke har memory mapping ki detailed memory usage (RSS, PSS, Private/Shared pages, Swap, permissions adi) ki information read karke user ko dikhati hai; ise Process Address Space ka detailed analysis aur memory consumption inspect karne ke liye use kiya jata hai.
+
+3. pmap - pmap ek Linux user-space utility hai jo /proc/<PID>/maps aur related kernel memory information ko read karke running process ke memory layout ko human-readable summary ke roop me dikhati hai; ise Process Address Space ko jaldi inspect aur analyze karne ke liye use kiya jata hai.
+
+4. gdb - gdb (GNU Debugger) ek user-space debugging tool hai jo Kernel ke debugging interfaces (jaise ptrace) ke through running process ko control aur inspect karta hai, uski memory, registers aur execution state ko real-time me analyze karta hai; ise debugging, reverse engineering aur Process Address Space ko inspect karne ke liye use kiya jata hai.
