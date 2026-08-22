@@ -1,4 +1,4 @@
-# 6.1810 Lecture 1 — Operating System Overview & UNIX System Calls
+# Operating System Overview & UNIX System Calls
 
 ## 1. Operating System kya hota hai?
 
