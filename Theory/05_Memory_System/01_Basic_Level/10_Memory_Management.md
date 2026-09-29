@@ -52,8 +52,17 @@ Memory allocation mein OS ko kai challenges face karne padte hain, kyunki multip
 
 
 # 2. Memory Organization and Tracking
+## 1. Memory Organization
+Memory Organization ka matlab hai RAM ko kis tarah structure aur parts mein arrange kiya jata hai, taaki program aur data ko memory mein sahi locations aur layout ke according store kiya ja sake.
+### Types of Memory Organization
+1. Physical Memory Organization - Isme hum samajhte hai ki actual RAM ka structure kaisa hota hai, memory cells aur addresses kis tarah arranged hote hai, aur physical memory ma data kis location par store hota hai. 
+  - **Memory Cells** : Memory Cell memory ka ek chhota storage element hota hai, jo information store karta hai. Digital computer mein information bits ke form mein hoti hai, isliye ek basic memory cell aam taur par 1 bit (0 ya 1) store karta hai.
+      - **Memory Cell ka ander kya hota hai?**
+        1. DRAM - Ek bit ko store karne ka liye aam taur par ek transistor aur ek capacitor ka use hota hai.
+        2. SRAM - Ek bit ko store karne ka liye aam taur par multiple transistors ka circuit use hota hai. 
 
-
+---
+2. Logical Memory Organization - Ishme hum samajhte hai ki program ke prespective sa memory ka structure kaisa hota hai aur ushki memory ko code, data heap aur stack jaisa regions ma kaisa organize kiya jata hai. 
 # 3. Memory Allocation and Deallocation
 
 # 4. Address Translation and Mapping
@@ -61,3 +70,32 @@ Memory allocation mein OS ko kai challenges face karne padte hain, kyunki multip
 # 5. Virtual Memory Management 
 
 # 6. Memory Protection and Sharing 
+
+---
+
+# 2. Address Space 
+Address Space har process ka apna virtual address-map hota hai, jiske addresses ko use karke program apne code aur data access karta hai. OS aur hardware in virtual addresses ko actual physical memory se map karte hain, jisse program ko apni private memory hone ka illusion milta hai.
+- **Components of Address Space**
+  1. Code (Text): Is region mein program ke executable instructions store hote hain, jinhe CPU execute karke program ke operations perform karta hai.
+  2. Data: Is region mein initialized global aur static variables store hote hain, jinhe program ke start hone se pehle initial values di gayi hoti hain.
+  3. BSS: Is region mein uninitialized ya zero-initialized global aur static variables store hote hain, jinhe program ke shuru hone par zero value milti hai.
+  4. Heap: Is region mein runtime par dynamically allocated memory hoti hai, jaise C mein malloc() se li gayi memory, jiska size program ke chalne ke dauran badal sakta hai.
+  5. Stack: Is region mein function calls se related data, jaise local variables, function arguments aur return information store hoti hai, jiska use function execution manage karne ke liye hota hai.
+  6. Memory-mapped regions: Is region mein shared libraries, mapped files aur anonymous memory mappings jaise areas hote hain, jinhe process apne virtual address space mein map karke access kar sakta hai.
+ 
+- **Arrangement of Address Space**
+  1. Code(text)
+  2. Data
+  3. BSS
+  4. Heap
+  5. Memory Mapped regions
+  6. Stack
+ 
+- **Virtual Address Space and Physical Address Space**
+    - **Virtual Address:** Address jo program use karta hai apne address space ke andar.
+    - **Physical Address:** Actual RAM mein woh location jahan data ya instruction physically stored hai.
+ 
+- **Goal of Memory Visualization**
+1. Transparency — program ko virtual memory ka pata na chale.
+2. Efficiency — virtualization ki wajah se time aur memory ka unnecessary overhead na ho.
+3. Protection — ek process doosre process ya OS ki memory ko unauthorized access ya modify na kar sake.
