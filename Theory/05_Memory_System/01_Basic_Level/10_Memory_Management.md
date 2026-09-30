@@ -1,3 +1,4 @@
+
 # 1. Introduction to Memory Management
 Memory Management operating system ka woh process hai jisme OS RAM (main memory) ko manage karta hai, yani processes ko memory allocate karta hai, unke memory usage ko track karta hai aur zaroorat padne par memory free karta hai, taaki multiple processes efficiently execute ho sakein.
 
@@ -99,3 +100,9 @@ Address Space har process ka apna virtual address-map hota hai, jiske addresses 
 1. Transparency — program ko virtual memory ka pata na chale.
 2. Efficiency — virtualization ki wajah se time aur memory ka unnecessary overhead na ho.
 3. Protection — ek process doosre process ya OS ki memory ko unauthorized access ya modify na kar sake.
+
+# 3. Stack & Heap Memory 
+  1. Stack - Stack memory ko compiler automatically manage karta hai. Tumhe manually malloc() ya free() use nahi karna padta, jab tum normal local variables declare karte ho.
+  2. Heap - Heap memory mein allocation aur deallocation tum explicitly karte ho. Iske liye C mein commonly malloc() aur free() use hote hain. Heap ki memory function return ka baad bhi reh shakti hai qoki allocation ka bad memory ko free v karna hota hai.
+
+  - **malloc()** : malloc() ka use heap par memory allocate karne ke liye hota hai. Tum isko batate ho ki kitne bytes chahiye.
