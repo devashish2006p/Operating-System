@@ -178,7 +178,7 @@ Example:
   - Base register ki value 32 KB hoti hai.
 > Base register virtual address ko physical memory ki correct location tak relocate karne mein help karta hai.
 
-### 6.3 Bounds Register
+### 3.3 Bounds Register
 Bounds register mein process ke address space ka size store hota hai.
 Example:
   - Process ka address space size 16 KB hai.
@@ -186,11 +186,11 @@ Example:
   - Valid virtual addresses 0 se 16 KB - 1 tak honge.
 > Bounds register ka purpose ye ensure karna hai ki process apni allowed virtual address range ke andar hi memory access kare.
 > Agar virtual address bounds ke equal ya usse bada ho, ya negative ho, to CPU exception raise karta hai.
-### 6.4 Address Translation Formula
+### 3.4 Address Translation Formula
 > Physical Address = Virtual Address + Base 
 > Hardware pehle bounds check karta hai. Address valid hone par base add karke physical address generate karta hai.
 
-### 6.5 Bounds Checking aur Protection
+### 3.5 Bounds Checking aur Protection
 Bounds register process ko apni allowed memory ke bahar access karne se rokta hai.
 ```
 Maan lo bounds 16 KB hai:
@@ -203,7 +203,7 @@ Negative address	Allowed range se bahar	Fault
 Invalid address par CPU exception raise karta hai aur OS handler ko control deta hai.
 Bounds checking address translation ke saath memory protection provide karta hai.
 ```
-### 6.6 Static Relocation
+### 3.6 Static Relocation
 Static relocation software-based relocation technique hai jisme loader executable ke addresses ko run hone se pehle rewrite karta hai.
 Example:
   - Program ek instruction mein address 1000 use karta hai.
@@ -212,7 +212,7 @@ Example:
 **Static Relocation ki Problems**
   1. Protection provide nahi karti: Process illegal addresses generate karke doosre process ya OS ki memory access kar sakta hai.
   2. Relocation difficult hota hai: Ek baar executable ke addresses rewrite ho jaane ke baad process ko doosri physical location par move karna difficult hota hai.
-### 6.7 Dynamic Relocation
+### 3.7 Dynamic Relocation
 Dynamic relocation mein address translation runtime par hardware karta hai.
 OS process ke liye base register set karta hai. Hardware har memory reference par virtual address mein base add karta hai aur bounds check karta hai.
 **Iske benefits:**
@@ -220,7 +220,7 @@ OS process ke liye base register set karta hai. Hardware har memory reference pa
   - Process ko physical memory mein different location par load kiya ja sakta hai.
   - Bounds checking ke through protection milti hai.
   - Process ko stop karke memory copy aur base update karke relocate kiya ja sakta hai.
-### 6.8 Memory Management Unit (MMU)
+### 3.8 Memory Management Unit (MMU)
 Memory Management Unit (MMU) processor ka hardware part hai jo address translation mein help karta hai.
 **Base-and-Bounds model mein MMU:**
   - Base aur bounds registers use karta hai.
@@ -229,256 +229,148 @@ Memory Management Unit (MMU) processor ka hardware part hai jo address translati
   - Invalid access par exception mechanism ke saath kaam karta hai.
 > More sophisticated memory management techniques mein MMU ke andar additional circuitry add hoti hai.
 
+## 4. Operating System Issues
+> Base-and-Bounds model mein hardware translation karta hai, lekin OS ko kuch critical events par involve hona padta hai.
+**OS ki main responsibilities hain:**
+  1. Process creation par memory allocate karna.
+  2. Process termination par memory reclaim karna.
+  3. Context switch par base/bounds save aur restore karna.
+  4. Process relocation manage karna.
+  5. Exception handlers provide karna.
+  6. Boot time par necessary system structures initialize karna.
+### 4.1 Process Creation par Memory Allocation
+> Jab naya process create hota hai, OS ko uske address space ke liye physical memory mein suitable space find karni hoti hai.
+**OS:**
+  1. Free list mein available space search karta hai.
+  2. Process ke address space ke liye suitable slot choose karta hai.
+  3. Slot ko occupied mark karta hai.
+  4. Process ke liye required memory-management information set karta hai.
+> Variable-sized address spaces ke case mein allocation more complicated hota hai.
+### 4.2 Process Termination par Memory Reclamation
+> Process terminate hone par OS uski memory reclaim karta hai.
+**Termination do tarah se ho sakta hai:**
+  - Process normally exit kare.
+  - Process misbehavior ke karan forcefully terminate kiya jaye.
+**Termination ke baad OS:**
+  1. Process ki allocated memory free karta hai.
+  2. Memory range ko free list mein wapas add karta hai.
+  3. Process ke associated data structures clean up karta hai.
+> Isse memory future processes ya OS ke use ke liye available hoti hai.
+### 4.3 Context Switch par Base/Bounds Management
+> Ek CPU par ek hi base/bounds register pair hota hai. Lekin har process ka base aur bounds different ho sakta hai, kyunki processes physical memory mein alag-alag locations par placed ho sakte hain.
+> Isliye context switch par OS ko current process ki register values save aur next process ki values restore karni padti hain.
 
+**Jab OS Process A ko stop karta hai:**
+  - Base register ki value save karta hai.
+  - Bounds register ki value save karta hai.
+> Ye values Process A ke process structure ya Process Control Block (PCB) mein store hoti hain.
 
-7. Section 15.4 — Hardware Support: A Summary
-Base-and-Bounds ko implement karne ke liye CPU ko kuch specific hardware features provide karne hote hain.
-7.1 Two CPU Modes
-CPU ko do modes support karne hote hain:
-Kernel mode / Privileged mode: OS is mode mein run karta hai aur machine ke privileged operations execute kar sakta hai.
-User mode: Normal applications is mode mein run karti hain aur unke operations restricted hote hain.
-Processor status word mein ek bit current mode identify kar sakta hai. System call, exception ya interrupt jaise events par CPU mode switch kar sakta hai.
-7.2 Base/Bounds Registers
-Hardware ko base aur bounds registers provide karne hote hain. OSTEP ke model mein har CPU par ek pair hota hai.
-Ye registers:
-- Address translation support karte hain.
-- Bounds checking support karte hain.
-- Different processes ke liye different values rakhte hain.
-7.3 Address Translation Circuitry
-CPU mein aisi circuitry honi chahiye jo:
-1. Virtual address receive kare.
-2. Address ko bounds ke against check kare.
-3. Valid address ke liye base add kare.
-4. Physical address memory system ko provide kare.
-Ye hardware har memory reference ke liye translation quickly perform karta hai.
-7.4 Privileged Instructions to Update Registers
-OS ko process change hone par base aur bounds registers update karne hote hain.
-CPU is purpose ke liye special privileged instructions provide karta hai. Ye instructions sirf kernel mode mein execute ho sakti hain.
-Agar user-mode process in registers ko change kar sake, to woh apne address translation ko manipulate karke doosri memory locations access karne ki koshish kar sakta hai.
-7.5 Privileged Instructions to Register Exception Handlers
-OS ko CPU ko batana hota hai ki exception aane par kis handler ko run karna hai.
-Iske liye CPU privileged instructions provide karta hai. User-mode applications ko in instructions ka direct access nahi diya jata.
-7.6 Ability to Raise Exceptions
-CPU ko exception raise karne ki ability honi chahiye jab:
-- Process out-of-bounds memory access kare.
-- User-mode process privileged instruction execute karne ki koshish kare.
-Exception ke baad CPU user program ko stop karke OS handler ko control deta hai.
-7.7 Figure 15.3: Hardware Requirements
-Hardware requirement	Purpose
-Privileged mode	User-mode process ko privileged operations se rokna
-Base/bounds registers	Address translation aur bounds checking
-Translation circuitry	Virtual address translate karna aur bounds check karna
-Privileged register-update instructions	OS ko base/bounds set karne dena
-Privileged handler-registration instructions	OS ko exception handlers ke addresses set karne dena
-Exception-generation ability	Illegal access aur privileged instruction attempts detect karna
-7.8 Free List
-Free list ek simple OS data structure hai jo physical memory ke un ranges ki list maintain karti hai jo currently use mein nahi hain.
-OS free list ka use:
-- Naye processes ko memory allocate karne ke liye.
-- Free physical memory track karne ke liye.
-- Terminated processes ki memory wapas available karne ke liye.
-Example:
-Physical range	Status
-0–16 KB	OS
-16–32 KB	Free
-32–48 KB	Process A
-48–64 KB	Free
-Is example mein free list mein do ranges hongi: 16–32 KB aur 48–64 KB.
+**Jab OS Process B ko run karta hai:**
+  - Process B ke PCB se base value read karta hai.
+  - Process B ke PCB se bounds value read karta hai.
+  - Dono values CPU registers mein set karta hai.
+> First time process run hone par bhi OS ko correct base/bounds values set karni hoti hain.
+# 4.4 Process Relocation while Stopped
+> Jab process run nahi kar raha hota, OS uski address space ko physical memory mein doosri location par move kar sakta hai.
+**Iske steps:**
+  1. OS process ko deschedule karta hai, yaani uski execution stop karta hai.
+  2. OS process ki complete address space ko old physical location se new physical location par copy karta hai.
+  3. OS process structure mein saved base register ko new physical starting address se update karta hai.
+  4. Process resume hone par OS updated base value CPU mein restore karta hai.
+  Process ke virtual addresses same rehte hain. Isliye process ko pata nahi chalta ki uski memory physical RAM mein relocate ho chuki hai.
+### 4.5 Exception Handling
+> OS ko exceptions handle karne ke liye functions ya handlers provide karne hote hain.
+> OS boot time par privileged instructions ke through exception handlers install karta hai.
+**Example:**
+  1. Process out-of-bounds memory access karta hai.
+  2. CPU exception raise karta hai.
+  3. CPU OS ke out-of-bounds handler ko control deta hai.
+  4. OS handler situation ko handle karta hai.
+  5. Is example mein OS likely offending process terminate karega.
+> OS ko machine protect karni hoti hai, isliye woh illegal memory access ya privileged operations ko allow nahi karta.
 
-8. Section 15.5 — Operating System Issues
-Base-and-Bounds model mein hardware translation karta hai, lekin OS ko kuch critical events par involve hona padta hai.
-OS ki main responsibilities hain:
-1. Process creation par memory allocate karna.
-2. Process termination par memory reclaim karna.
-3. Context switch par base/bounds save aur restore karna.
-4. Process relocation manage karna.
-5. Exception handlers provide karna.
-6. Boot time par necessary system structures initialize karna.
-8.1 Process Creation par Memory Allocation
-Jab naya process create hota hai, OS ko uske address space ke liye physical memory mein suitable space find karni hoti hai.
-OSTEP ke initial assumptions ke karan physical memory ko equal-sized slots mein divide karke manage kiya ja sakta hai.
-OS:
-1. Free list mein available space search karta hai.
-2. Process ke address space ke liye suitable slot choose karta hai.
-3. Slot ko occupied mark karta hai.
-4. Process ke liye required memory-management information set karta hai.
-Variable-sized address spaces ke case mein allocation more complicated hota hai.
-8.2 Process Termination par Memory Reclamation
-Process terminate hone par OS uski memory reclaim karta hai.
-Termination do tarah se ho sakta hai:
-- Process normally exit kare.
-- Process misbehavior ke karan forcefully terminate kiya jaye.
-Termination ke baad OS:
-1. Process ki allocated memory free karta hai.
-2. Memory range ko free list mein wapas add karta hai.
-3. Process ke associated data structures clean up karta hai.
-Isse memory future processes ya OS ke use ke liye available hoti hai.
-8.3 Context Switch par Base/Bounds Management
-Ek CPU par ek hi base/bounds register pair hota hai. Lekin har process ka base aur bounds different ho sakta hai, kyunki processes physical memory mein alag-alag locations par placed ho sakte hain.
-Isliye context switch par OS ko current process ki register values save aur next process ki values restore karni padti hain.
-Save
-Jab OS Process A ko stop karta hai:
-- Base register ki value save karta hai.
-- Bounds register ki value save karta hai.
-Ye values Process A ke process structure ya Process Control Block (PCB) mein store hoti hain.
-Restore
-Jab OS Process B ko run karta hai:
-- Process B ke PCB se base value read karta hai.
-- Process B ke PCB se bounds value read karta hai.
-- Dono values CPU registers mein set karta hai.
-First time process run hone par bhi OS ko correct base/bounds values set karni hoti hain.
-8.4 Process Relocation while Stopped
-Jab process run nahi kar raha hota, OS uski address space ko physical memory mein doosri location par move kar sakta hai.
-Iske steps:
-1. OS process ko deschedule karta hai, yaani uski execution stop karta hai.
-2. OS process ki complete address space ko old physical location se new physical location par copy karta hai.
-3. OS process structure mein saved base register ko new physical starting address se update karta hai.
-4. Process resume hone par OS updated base value CPU mein restore karta hai.
-Process ke virtual addresses same rehte hain. Isliye process ko pata nahi chalta ki uski memory physical RAM mein relocate ho chuki hai.
-8.5 Exception Handling
-OS ko exceptions handle karne ke liye functions ya handlers provide karne hote hain.
-OS boot time par privileged instructions ke through exception handlers install karta hai.
-Example:
-1. Process out-of-bounds memory access karta hai.
-2. CPU exception raise karta hai.
-3. CPU OS ke out-of-bounds handler ko control deta hai.
-4. OS handler situation ko handle karta hai.
-5. Is example mein OS likely offending process terminate karega.
-OS ko machine protect karni hoti hai, isliye woh illegal memory access ya privileged operations ko allow nahi karta.
-
-9. Boot Time — Figure 15.5
-Machine boot hone par abhi koi user program run nahi kar raha hota. OS kernel mode mein system ko ready karne ke liye initial setup karta hai.
-9.1 Trap Table Initialize Karna
-OS trap table initialize karta hai aur important handlers ke addresses remember karta hai:
-- System call handler.
-- Timer handler.
-- Illegal memory access handler.
-- Illegal instruction handler.
-Isse CPU ko pata hota hai ki different events ke waqt kis OS handler ko control dena hai.
-9.2 Timer Start Karna
-OS interrupt timer start karta hai.
-Timer ko is tarah set kiya ja sakta hai ki kuch time baad interrupt generate ho. Timer interrupt OS ko CPU control wapas lene aur scheduling karne ka opportunity deta hai.
-9.3 Process Table Initialize Karna
-OS process table initialize karta hai. Is table mein processes ki management-related information maintain hoti hai.
-9.4 Free List Initialize Karna
+## 5. Boot Time 
+> Machine boot hone par abhi koi user program run nahi kar raha hota. OS kernel mode mein system ko ready karne ke liye initial setup karta hai.
+### 5.1 Trap Table Initialize Karna
+> Trap Table ek table hoti hai jisme OS ke different traps aur interrupts ko handle karne wale handler functions ke addresses stored hote hain. Isse CPU ko pata chalta hai ki kisi particular event par control kahan transfer karna hai.
+> OS trap table initialize karta hai aur important handlers ke addresses remember karta hai:
+  - System call handler.
+  - Timer handler.
+  - Illegal memory access handler.
+  - Illegal instruction handler.
+> Isse CPU ko pata hota hai ki different events ke waqt kis OS handler ko control dena hai.
+### 5.2 Timer Start Karna
+> OS interrupt timer start karta hai. Timer ko is tarah set kiya ja sakta hai ki kuch time baad interrupt generate ho. Timer interrupt OS ko CPU control wapas lene aur scheduling karne ka opportunity deta hai.
+### 5.3 Process Table Initialize Karna
+> Process Table OS ka ek data structure hota hai, jisme OS computer par chal rahe processes ki information maintain karta hai. Isse OS ko pata rehta hai ki kaunsa process exist karta hai, kis state mein hai aur usko resume karne ke liye kya information chahiye.
+> OS process table initialize karta hai. Is table mein processes ki management-related information maintain hoti hai.
+### 5.4 Free List Initialize Karna
 OS physical memory ke free ranges track karne ke liye free list initialize karta hai.
 Is list ka use baad mein process creation aur memory allocation ke waqt hota hai.
 
+## 6. Runtime 
+### 6.1  Process A ko Start Karna
+**OS Process A ko start karne ke liye ye steps perform karta hai:**
+  1. Process table mein A ke liye entry allocate karta hai.
+  2. A ke address space ke liye physical memory allocate karta hai.
+  3. A ke liye base aur bounds registers set karta hai.
+  4. Process A ke saved CPU registers restore karta hai.
+  5. CPU ko user mode mein switch karta hai.
+  6. Process A ke initial Program Counter par jump karta hai.
+> Ab Process A execute hona start karta hai.
+### 6.2 Process A ka Normal Execution
+> Process A jab instructions execute karta hai, hardware memory references ko handle karta hai.
+**Instruction fetch ke waqt:**
+  1. CPU instruction ka virtual address generate karta hai.
+  2. Hardware address ko translate karta hai.
+  3. CPU translated physical address se instruction fetch karta hai.
+**Load/store ke waqt:**
+  1. Process virtual address generate karta hai.
+  2. Hardware check karta hai ki address bounds ke andar hai ya nahi.
+  3. Valid hone par hardware base add karke physical address generate karta hai.
+  4. Memory system us physical address par load/store perform karta hai.
+> Normal execution ke dauran OS ko har translation ke liye intervene nahi karna padta.
+### 6.3 Timer Interrupt aur Context Switch
+**Kuch time baad timer interrupt aata hai.**
+**CPU:**
+  1. User mode se kernel mode mein switch karta hai.
+  2. Timer handler ko control deta hai.
+**OS:**
+  1. Decide karta hai ki Process A ko stop karke Process B ko run karna hai.
+  2. Context switch routine call karta hai.
+  3. Process A ke registers, including base/bounds, uske process structure mein save karta hai.
+  4. Process B ke registers, including base/bounds, uske process structure se restore karta hai.
+  5. Return-from-trap ke through Process B ko user mode mein resume karta hai.
+  6. Process B ke Program Counter par execution continue karata hai.
+### 6.4 Process B ka Illegal Load
+> Process B ek aisa load operation execute karta hai jiska virtual address bounds ke bahar hai.
+**Hardware:**
+  1. Address ko check karta hai.
+  2. Address invalid hone par exception raise karta hai.
+  3. Process B ki execution stop karta hai.
+  4. Kernel mode mein switch karke OS trap handler ko control deta hai.
+### 6.5 Process B ko Terminate Karna
+> OS trap handler illegal memory access ko handle karta hai. Is example mein OS Process B ko terminate karne ka decision leta hai.
+**Uske baad OS:**
+  - Process B ki memory deallocate karta hai.
+  - Process table se B ki entry free karta hai.
+> Reclaimed memory aur process-table resources future use ke liye available ho sakte hain.
 
+## 7. Base-and-Bounds ki Efficiency aur Limitation
+### 7.1 Efficiency
+> Base-and-Bounds relatively simple hardware support se kaam kar sakta hai.
+**Hardware ko:**
+  - Virtual address bounds ke against check karna hota hai.
+  - Valid hone par base add karna hota hai.
+> Isliye address translation efficiently perform ho sakti hai.
+### 7.2 Protection
+> OS aur hardware milkar ensure karte hain ki process apni allowed address space ke bahar memory references generate karke doosre process ya OS ki memory access na kare.
+> Protection OS ke important goals mein se ek hai. Agar processes freely memory overwrite kar sakein, to woh trap table jaise important OS structures ko damage kar sakte hain.
+### 7.3 Internal Fragmentation
+> Base-and-Bounds ki important limitation internal fragmentation hai.
+> Internal fragmentation tab hoti hai jab allocated memory block ke andar kuch memory unused reh jaati hai.
 
-
-
-
-10. Runtime — Figure 15.6
-Figure 15.6 show karta hai ki process start hone se lekar timer interrupt, context switch aur illegal memory access tak OS aur hardware ka interaction kaise hota hai.
-10.1 Process A ko Start Karna
-OS Process A ko start karne ke liye ye steps perform karta hai:
-1. Process table mein A ke liye entry allocate karta hai.
-2. A ke address space ke liye physical memory allocate karta hai.
-3. A ke liye base aur bounds registers set karta hai.
-4. Process A ke saved CPU registers restore karta hai.
-5. CPU ko user mode mein switch karta hai.
-6. Process A ke initial Program Counter par jump karta hai.
-Ab Process A execute hona start karta hai.
-10.2 Process A ka Normal Execution
-Process A jab instructions execute karta hai, hardware memory references ko handle karta hai.
-Instruction fetch ke waqt:
-1. CPU instruction ka virtual address generate karta hai.
-2. Hardware address ko translate karta hai.
-3. CPU translated physical address se instruction fetch karta hai.
-Load/store ke waqt:
-1. Process virtual address generate karta hai.
-2. Hardware check karta hai ki address bounds ke andar hai ya nahi.
-3. Valid hone par hardware base add karke physical address generate karta hai.
-4. Memory system us physical address par load/store perform karta hai.
-Normal execution ke dauran OS ko har translation ke liye intervene nahi karna padta.
-10.3 Timer Interrupt aur Context Switch
-Kuch time baad timer interrupt aata hai.
-CPU:
-1. User mode se kernel mode mein switch karta hai.
-2. Timer handler ko control deta hai.
-OS:
-1. Decide karta hai ki Process A ko stop karke Process B ko run karna hai.
-2. Context switch routine call karta hai.
-3. Process A ke registers, including base/bounds, uske process structure mein save karta hai.
-4. Process B ke registers, including base/bounds, uske process structure se restore karta hai.
-5. Return-from-trap ke through Process B ko user mode mein resume karta hai.
-6. Process B ke Program Counter par execution continue karata hai.
-10.4 Process B ka Illegal Load
-Process B ek aisa load operation execute karta hai jiska virtual address bounds ke bahar hai.
-Hardware:
-1. Address ko check karta hai.
-2. Address invalid hone par exception raise karta hai.
-3. Process B ki execution stop karta hai.
-4. Kernel mode mein switch karke OS trap handler ko control deta hai.
-10.5 Process B ko Terminate Karna
-OS trap handler illegal memory access ko handle karta hai.
-Is example mein OS Process B ko terminate karne ka decision leta hai.
-Uske baad OS:
-- Process B ki memory deallocate karta hai.
-- Process table se B ki entry free karta hai.
-Reclaimed memory aur process-table resources future use ke liye available ho sakte hain.
-10.6 Figure 15.6 ka Main Lesson
-Normal execution mein process directly CPU par run karta hai aur hardware address translation perform karta hai.
-OS important events par control leta hai, jaise process start, timer interrupt, context switch aur exception.
-Ye limited direct execution ka memory virtualization ke saath use hai: normal execution efficient rehta hai aur OS critical moments par machine ka control maintain karta hai.
-
-11. Base-and-Bounds ki Efficiency aur Limitation
-11.1 Efficiency
-Base-and-Bounds relatively simple hardware support se kaam kar sakta hai.
-Hardware ko:
-- Virtual address bounds ke against check karna hota hai.
-- Valid hone par base add karna hota hai.
-Isliye address translation efficiently perform ho sakti hai.
-11.2 Protection
-OS aur hardware milkar ensure karte hain ki process apni allowed address space ke bahar memory references generate karke doosre process ya OS ki memory access na kare.
-Protection OS ke important goals mein se ek hai. Agar processes freely memory overwrite kar sakein, to woh trap table jaise important OS structures ko damage kar sakte hain.
-11.3 Internal Fragmentation
-Base-and-Bounds ki important limitation internal fragmentation hai.
-Internal fragmentation tab hoti hai jab allocated memory block ke andar kuch memory unused reh jaati hai.
-OSTEP ke example mein process ko 32 KB se 48 KB tak 16 KB ka slot diya gaya hai. Lekin process ka stack aur heap bahut bade nahi hain, aur unke beech ka space use nahi ho raha.
-Phir bhi poora fixed-size slot process ko allocated hai.
-Isliye allocated block ke andar unused memory waste hoti hai.
-11.4 Segmentation ki Zaroorat
+### 7.4 Segmentation ki Zaroorat
 Base-and-Bounds mein process ko fixed-size continuous physical memory block dena padta hai. Isse unused space bhi allocate ho sakti hai aur internal fragmentation arise hoti hai.
-OSTEP ka next step Segmentation hai, jo Base-and-Bounds ka generalization hai. Iska objective process ke different memory regions ko zyada flexible tarike se manage karna aur memory utilization improve karna hai.
+  
 
-12. Complete Chapter Revision — Important Definitions
-Term	Definition
-Memory virtualization	Physical memory ko aise abstraction ke roop mein provide karna jahan process ko apna private address space dikhe
-Virtual address	Process ke perspective se memory location ka address
-Physical address	Actual physical memory mein location ka address
-Address translation	Virtual address ko physical address mein convert karna
-Limited Direct Execution	Program ko mostly directly run karna aur important events par OS ko control dena
-Interposition	Interface ke beech mechanism insert karke additional functionality provide karna
-Static relocation	Loader ke through executable ke addresses ko run hone se pehle rewrite karna
-Dynamic relocation	Runtime par hardware ke through addresses translate karna
-Base register	Process ke physical memory starting address ko store karna
-Bounds register	Process ke allowed address space ka size store karna
-MMU	Address translation mein help karne wala processor hardware
-Free list	Physical memory ke free ranges track karne wali OS data structure
-PCB	Per-process structure jisme process-related state, including saved register values, store ho sakti hai
-Context switch	CPU ka ek process se doosre process par switch karna
-Exception	Exceptional condition par CPU ka normal execution se OS handler ko control dena
-Internal fragmentation	Allocated memory block ke andar unused memory ka waste hona
-Trap table	OS handlers ke addresses se related table, jise events ke waqt control transfer ke liye use kiya jata hai
-13. Important Processes — Ek Saath
-Process creation
-1. OS process table mein entry banata hai.
-2. Free list se suitable physical memory range find karta hai.
-3. Memory allocate karke occupied mark karta hai.
-4. Process ke base/bounds set karta hai.
-5. Process ko user mode mein run karata hai.
-
-Context switch
-1. Timer interrupt ya doosre event par CPU kernel mode mein aata hai.
-2. OS current process ke registers, including base/bounds, save karta hai.
-3. OS next process ke saved registers restore karta hai.
-4. CPU user mode mein switch karke next process resume karta hai.
-
-Illegal memory access
-1. Process out-of-bounds virtual address generate karta hai.
-2. Hardware bounds check fail karta hai.
-3. CPU exception raise karke OS handler ko control deta hai.
-4. OS offending process ko terminate kar sakta hai.
-5. OS process ki memory reclaim karke free list mein return karta hai.
