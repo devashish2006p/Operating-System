@@ -70,7 +70,9 @@ Memory Organization ka matlab hai RAM ko kis tarah structure aur parts mein arra
 
 # 5. Virtual Memory Management 
 
-# 6. Memory Protection and Sharing 
+# 6. Memory Protection and Sharing
+
+## 7. Free Space Management
 
 ---
 ```
