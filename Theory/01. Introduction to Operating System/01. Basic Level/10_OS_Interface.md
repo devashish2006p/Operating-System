@@ -45,7 +45,24 @@ User ka lia OS interface mainly 2 common forms mein hota hai.
     3. API ka level generally SCI se higher hota hai, isliye programmer ko kernel-level details directly handle nahi karni padti.
     4. Agar API ki requested functionality ko kernel ki zarurat ho, to API ki implementation internally system call/SCI use kar sakti hai.
     5. API ka primary purpose programmer ko functionality ko easily aur consistently use karne dena hai, na ki directly kernel se communication karna.
-
+  - **Internal Mechanism**
+    1. Program API ko call karta hai - Application programmer source code mein ksi API function ko call karta hai. Ex - fopen("data.txt", "r"); *fopen()* yaha API ka entry point hai. Caller ko API ka ander ka implementation directly pta hona zaroori nahi hota. Caller basically API ka defined contract ka according function name, arguments aur expected return behaviour use karta hai.
+    2. Compiler API call ko ordinary function call ka form mein represent karta hai - Is step mein compiler source code ko machine/object code mein translate karta hai. Uske baad linker API function ke reference ko resolve karta hai. Static linking mein required API/library code executable ke andar include ho sakta hai, jabki dynamic linking mein API function ki implementation runtime par shared library se resolve/load hoti hai aur function call ko us implementation tak pahunchne ke liye required address/reference mechanism set up kiya jata hai.
+    3. API ka required arguments calling convention ka according pass hota hai - Jab program API function ko call karta hai, to API ko diye gaye arguments (jaise "data.txt" aur "r") ko computer ek predefined rule ke according specific registers ya memory/stack location mein rakhta hai, taaki API function un arguments ko receive karke use kar sake.
+    4. Control API implementation ko transfer hota hai - CPU ab API function ka actual implementation wale instructions execute karta hai. 
+    5. API arguments ko interpret karti hai - API implementation received arguments ko API ka defined meaning ke according interpret karti hai. 
+    6. API input validation/parameter handling karti hai - API implementation arguments ko process karne sa pehle required checks kar shakti hai.
+       ```
+       Example :-
+        - equired argument valid hai ya nahi,
+        - pointer/reference usable form mein hai ya nahi,
+        - mode string recognized hai ya nahi,
+        - argument combination API ke rules ke according valid hai ya nahi.
+       ```
+    7. API apna internal state/context prepare karti hai - Kuch APIs ko operation perform karne ke liye internal data structures ya state maintain karni padti hai.
+       ```
+       Example :-
+1. Kuch APIs ko operation perform karne ke liye internal data structures ya state maintain karni padti hai.
 3. ABI (Application Binary Interface) - ABI compiled binary code ke low-level interaction rules define karta hai—jaise arguments kaise pass honge, registers/stack kaise use honge, return value kaise milegi, aur binary components/system interfaces ke saath interaction ka exact convention kya hoga.
    - **Functions**
     1. ABI compiled binary code aur underlying libraries, OS/runtime ya other binary components ke beech interaction ke low-level rules define karta hai.
