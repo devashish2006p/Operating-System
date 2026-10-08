@@ -62,7 +62,32 @@ User ka lia OS interface mainly 2 common forms mein hota hai.
     7. API apna internal state/context prepare karti hai - Kuch APIs ko operation perform karne ke liye internal data structures ya state maintain karni padti hai.
        ```
        Example :-
-1. Kuch APIs ko operation perform karne ke liye internal data structures ya state maintain karni padti hai.
+        1. Kaunsi file open hai → data.txt
+        2. File kis mode mein open hai → read ("r")
+        3. Abhi file mein kahan tak read kiya hai → current position
+        4. Buffer mein kya data hai → buffered data
+        5. Koi error hua hai ya nahi → error status
+        6. File stream se related flags/status → current stream state
+       ```
+    8. API internally required lower level operation ko invoke karta hai - Ab API implementation ko agr apna requested functionality complete karne ka liye ksi lower-level facility ki jarurat hai to API internally us facility ko invoke kar shakti hai. Is point par API ka internal implementation ksi aur function, library routine, runtime machanism  ya eventually OS facility ko call kar shakta hai. Yahin API mechanism ka scope end hone ki taraf aata hai qoki ab API apna kaam karne ka liye underlying facility ko use kar rhi hai.
+    9. Lower level operation ka result API ko milta hai.
+    10. API result ko process/translate karta hai.
+    11. API apna internal state update karti hai.
+    12. API return value prepare karti hai.
+    13. API function return karti hai.
+    14. Application API ka result receive karta hai. 
+       ```
+       Example :-
+        Application
+              ↓
+        fopen() API
+              ↓
+        library implementation
+              ↓
+        lower-level operation
+       ```
+    11. 
+
 3. ABI (Application Binary Interface) - ABI compiled binary code ke low-level interaction rules define karta hai—jaise arguments kaise pass honge, registers/stack kaise use honge, return value kaise milegi, aur binary components/system interfaces ke saath interaction ka exact convention kya hoga.
    - **Functions**
     1. ABI compiled binary code aur underlying libraries, OS/runtime ya other binary components ke beech interaction ke low-level rules define karta hai.
