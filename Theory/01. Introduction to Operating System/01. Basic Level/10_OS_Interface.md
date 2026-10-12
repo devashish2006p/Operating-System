@@ -86,7 +86,6 @@ User ka lia OS interface mainly 2 common forms mein hota hai.
               ↓
         lower-level operation
        ```
-    11. 
 
 3. ABI (Application Binary Interface) - ABI compiled binary code ke low-level interaction rules define karta hai—jaise arguments kaise pass honge, registers/stack kaise use honge, return value kaise milegi, aur binary components/system interfaces ke saath interaction ka exact convention kya hoga.
    - **Functions**
@@ -100,5 +99,3 @@ User ka lia OS interface mainly 2 common forms mein hota hai.
   > SCI → kernel service access karne ka interface
   > ABI → binary-level interaction ke rules/contract
 
-# 4. OS Interface Design 
-Operating System apni services ko users aur programs ke saamne kis tarah expose karega, unhe kaise access kiya jaayega, aur interaction ke rules kya honge — in sab ko design karna OS interface design hai.
